@@ -1,10 +1,16 @@
 const config = require('../config/config');
 const Hapi = require('hapi');
 const test = require('./api/test');
+const hapiJsonApi = require('@gar/hapi-json-api');
 
 const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.iP') });
 
-const infrastructuralPlugins = [];
+const infrastructuralPlugins = [
+  {
+    plugin: hapiJsonApi,
+    options: {}
+  }
+];
 const domainPlugins = [
   {
     plugin: test,

@@ -1,9 +1,9 @@
-const Test = require('./models/test');
+const { Test } = require('./models');
 const routes = require('./routes');
 
 const applyRoutes = (server) => {
-  // Plugin with multiple routes.
-  server.route([...routes]);
+  // Plugin with multiple routes.  
+  server.route(routes);
 };
 
 module.exports = {

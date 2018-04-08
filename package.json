@@ -9,9 +9,7 @@
     "update:deps": "npm-check -u",
     "test": "echo \"Todo: Create tests.\" && exit 0",
     "pretest": "npm run lint",
-    "testsecurity": "mocha ./test/security --recursive",
-    "debug:testsecurity": "mocha --inspect-brk ./test/security --recursive",
-    "dev:debug": "node --inspect-brk ./index.js",
+    "debug": "node --inspect-brk ./index.js",
     "start": "node ./index.js"
   },
   "pre-commit": [
@@ -19,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/binarymist/purpleteam-app-scanner.git"
+    "url": "git+https://github.com/binarymist/purpleteam-orchestrator.git"
   },
   "keywords": [
     "security",
@@ -29,13 +27,16 @@
   "author": "Kim Carter",
   "license": "",
   "bugs": {
-    "url": "https://github.com/binarymist/purpleteam-app-scanner/issues"
+    "url": "https://github.com/binarymist/purpleteam-orchestrator/issues"
   },
   "homepage": "https://github.com/binarymist/purpleteam-app-scanner#readme",
   "dependencies": {
+    "@gar/hapi-json-api": "git+https://github.com/binarymist/binarymist-hapi-jsonapi.git#upgradeToHapi17",
     "convict": "^4.1.0",
+    "eventsource": "^1.0.5",
     "hapi": "^17.2.3",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "wreck": "^14.0.2"
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",
   "devDependencies": {
