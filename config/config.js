@@ -21,45 +21,47 @@ const schema = {
       default: '240.0.0.0'
     }
   },
-  appScanner: {
-    port: {
-      doc: 'The port of the app-scanner microservice.',
-      format: 'port',
-      default: 3000,
-      env: 'PORT'
+  testers: {
+    appScanner: {
+      port: {
+        doc: 'The port of the app-scanner microservice.',
+        format: 'port',
+        default: 3000,
+        env: 'PORT'
+      },
+      iP: {
+        doc: 'The IP address of the app-scanner microservice.',
+        format: 'ipaddress',
+        default: '240.0.0.0'
+      }
     },
-    iP: {
-      doc: 'The IP address of the app-scanner microservice.',
-      format: 'ipaddress',
-      default: '240.0.0.0'
-    }
-  },
-  serverScanner: {
-    port: {
-      doc: 'The port of the server-scanner microservice.',
-      format: 'port',
-      default: 3010,
-      env: 'PORT'
+    serverScanner: {
+      port: {
+        doc: 'The port of the server-scanner microservice.',
+        format: 'port',
+        default: 3010,
+        env: 'PORT'
+      },
+      iP: {
+        doc: 'The IP address of the server-scanner microservice.',
+        format: 'ipaddress',
+        default: '240.0.0.0'
+      }
     },
-    iP: {
-      doc: 'The IP address of the server-scanner microservice.',
-      format: 'ipaddress',
-      default: '240.0.0.0'
+    tlsChecker: {
+      port: {
+        doc: 'The port of the tls-checker microservice.',
+        format: 'port',
+        default: 3020,
+        env: 'PORT'
+      },
+      iP: {
+        doc: 'The IP address of the tls-checker microservice.',
+        format: 'ipaddress',
+        default: '240.0.0.0'
+      }
     }
-  },
-  tlsChecker: {
-    port: {
-      doc: 'The port of the tls-checker microservice.',
-      format: 'port',
-      default: 3020,
-      env: 'PORT'
-    },
-    iP: {
-      doc: 'The IP address of the tls-checker microservice.',
-      format: 'ipaddress',
-      default: '240.0.0.0'
-    }
-  },
+  }
 };
 
 const config = convict(schema);

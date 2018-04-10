@@ -2,14 +2,16 @@
   "host": {
     "iP": "127.0.0.1"
   },
-  "appScanner": {
-    "iP": "172.17.0.3"
-  },
-  "serverScanner": {
-    "iP": "172.17.0.4"
-  },
-  "tlsChecker": {
-    "iP": "172.17.0.5"
+  "testers": {
+    "appScanner": {
+      "iP": "172.17.0.3"
+    },
+    "serverScanner": {
+      "iP": "172.17.0.4"
+    },
+    "tlsChecker": {
+      "iP": "172.17.0.5"
+    }
   }
 }
 

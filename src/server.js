@@ -14,7 +14,9 @@ const infrastructuralPlugins = [
 const domainPlugins = [
   {
     plugin: test,
-    options: 'Options for test'
+    options: {
+      testers: config.get('testers')
+    }
   }
 ];
 

@@ -1,10 +1,17 @@
 const Wreck = require('wreck');
 const EventSource = require('eventsource');
 
+const app = require('./test.app');
+const server = require('./test.server');
+const tls = require('./test.tls');
+
 class Test {
-  initialise(config) {
-    this.config = config;
-    console.log(`In the test model's initialise method. The config is: "${this.config}"`); // eslint-disable-line no-console
+  constructor(config) {
+    const { testers } = config;
+    this.testersConfig = testers;
+
+
+    
   }
 
   async deployTestTeam() {
