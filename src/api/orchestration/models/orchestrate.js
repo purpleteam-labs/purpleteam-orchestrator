@@ -1,11 +1,11 @@
 const Wreck = require('wreck');
 const EventSource = require('eventsource');
 
-const app = require('./test.app');
-const server = require('./test.server');
-const tls = require('./test.tls');
+const app = require('./orchestrate.app');
+const server = require('./orchestrate.server');
+const tls = require('./orchestrate.tls');
 
-class Test {
+class Orchestrate {
   constructor(config) {
     const { testers } = config;
     this.testersConfig = testers;
@@ -45,4 +45,4 @@ class Test {
   }
 }
 
-module.exports = Test;
+module.exports = Orchestrate;
