@@ -24,7 +24,8 @@ class Orchestrate {
 
 
     const { res, payload } = await Wreck.post('http://127.0.0.1:3000/run-job');
-    console.log(payload.toString());
+    const testPlan = payload.toString();
+    console.log(testPlan);
 
 
 
@@ -40,7 +41,7 @@ class Orchestrate {
 
 
 
-    
+    return testPlan;
 
   }
 }

@@ -36,8 +36,8 @@ module.exports = [{
 //    If planOnly is passed, when the plan is returned, the tester is done
 //    Always return the plan to the CLI
 
-    return respToolkit.response().code(202);
-    // If we return a body then it needs to meet the jsonapi spec and the media type (Content-Type) must be application/vnd.api+json
+    return respToolkit.response(testPlan).code(202);
+    // If we return JSON API data then it needs to meet the jsonapi spec (http://jsonapi.org/format/#content-negotiation-servers) and the media type (Content-Type) must be application/vnd.api+json
 
 
 //    Provide feedback to the CLI on progress if requested
