@@ -10,7 +10,13 @@ class Test {
   async deployTestTeam() {
 
 
-    const { res, payload } = await Wreck.post('http://127.0.0.1:3000/test-route');
+    // Todo: get collection of testers from config.
+    // Todo: call each one.
+
+
+
+
+    const { res, payload } = await Wreck.post('http://127.0.0.1:3000/run-job');
     console.log(payload.toString());
 
 
