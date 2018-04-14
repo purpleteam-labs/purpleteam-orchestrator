@@ -1,60 +1,24 @@
+let testerModels;
 
-
-const app = require('./orchestrate.app');
-const server = require('./orchestrate.server');
-const tls = require('./orchestrate.tls');
-
-
-
-
-
-
-
-  
-let fileNames;
-let subModelFileNames;
-
-let testerNames;
-
-let testerModels
-
-const modelNameParts = {domain: 0, testerType: 1, fileExtension: 2};
-
-const modelNames = ( async () => {
+( async () => {
   const fs = require('fs');
   const { promisify } = require('util');
   const promiseToReadDir = promisify(fs.readdir);
 
-  fileNames = await promiseToReadDir(__dirname);
+  const modelFileNames = await promiseToReadDir(__dirname);
   
-  subModelFileNames = fileNames.filter(
-    fileName => {
-      return fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11))
-
-    } );
+  const subModelFileNames = modelFileNames.filter( fileName => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11)) );
   
-
-  testerModels = await subModelFileNames.map(fileName => {
-    
-    const modelFileNameParts = fileName.split('.');
-
-    return { ...require(`./${fileName}`), name: fileName.split('.')[modelNameParts.testerType] }
-
-  });
+  const modelNameParts = {domain: 0, testerType: 1, fileExtension: 2};
   
-
+  testerModels = subModelFileNames.map(fileName => ( { ...require(`./${fileName}`), name: fileName.split('.')[modelNameParts.testerType] } ) );
 })();
-
-
-
 
 
 class Orchestrate {
   constructor(config) {
     const { testers } = config;
     this.testersConfig = testers;
-
-
 
     
   }
@@ -69,12 +33,6 @@ class Orchestrate {
     //    Each job contains collection of testSession, if relevant for tester.
 
     // Deploy each tester.
-
-
-
-
-
-
     
 
     const combinedTestPlan = testerModels.map( testerModel => 
@@ -111,8 +69,8 @@ class Orchestrate {
 */
 
 
-    const temp = await Promise.all(combinedTestPlan);
-    return temp.reduce((combined, plan) => `${combined}\n\n${plan}`);
+    return (await Promise.all(combinedTestPlan)).reduce((combined, plan) => `${combined}\n\n${plan}`);
+    
     
 
   }
