@@ -3,14 +3,17 @@
     "iP": "127.0.0.1"
   },
   "testers": {
-    "appScanner": {
-      "iP": "172.17.0.3"
+    "app": {
+      "url": "http://172.17.0.3:3000",
+      "active": true
     },
-    "serverScanner": {
-      "iP": "172.17.0.4"
+    "server": {
+      "url": "http://172.17.0.4:3010",
+      "active": true
     },
-    "tlsChecker": {
-      "iP": "172.17.0.5"
+    "tls": {
+      "url": "http://172.17.0.5:3020",
+      "active": true
     }
   }
 }

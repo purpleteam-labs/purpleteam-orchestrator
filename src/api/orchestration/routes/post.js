@@ -14,19 +14,12 @@ module.exports = [{
 
 
 
-// First up work out design of creating jobs. What sort of architecture is commonly used for this in hapi.
 
 
 
-
-
-
-
-// Create job for each tester
-//    Each job contains collection of testSession
 
     const { model } = request.server.app;
-    const testPlan = await model.deployTestTeam();
+    const testPlan = await model.testTeam(request.payload);
 
 
 

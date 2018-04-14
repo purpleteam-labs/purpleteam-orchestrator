@@ -21,45 +21,51 @@ const schema = {
       default: '240.0.0.0'
     }
   },
-  testers: {
-    appScanner: {
-      port: {
-        doc: 'The port of the app-scanner microservice.',
-        format: 'port',
-        default: 3000,
-        env: 'PORT'
+  testers: {    
+    app: {
+      name: 'app',
+      url: {
+        doc: 'The url of the  app-scanner microservice.',
+        format: 'url',
+        default: null
       },
-      iP: {
-        doc: 'The IP address of the app-scanner microservice.',
-        format: 'ipaddress',
-        default: '240.0.0.0'
-      }
+      active: {
+        doc: 'Whether or not the app-scanner microservice is active.',
+        format: 'Boolean',
+        default: true
+      },
+      runJobRoute: '/run-job',
+      testResultRoute: '/test-results'
     },
-    serverScanner: {
-      port: {
-        doc: 'The port of the server-scanner microservice.',
-        format: 'port',
-        default: 3010,
-        env: 'PORT'
+    server: {
+      name: 'server',
+      url: {
+        doc: 'The url of the  server-scanner microservice.',
+        format: 'url',
+        default: null
       },
-      iP: {
-        doc: 'The IP address of the server-scanner microservice.',
-        format: 'ipaddress',
-        default: '240.0.0.0'
-      }
+      active: {
+        doc: 'Whether or not the server-scanner microservice is active.',
+        format: 'Boolean',
+        default: true
+      },
+      runJobRoute: '/run-job',
+      testResultRoute: '/test-results'      
     },
-    tlsChecker: {
-      port: {
-        doc: 'The port of the tls-checker microservice.',
-        format: 'port',
-        default: 3020,
-        env: 'PORT'
+    tls: {
+      name: 'tls',
+      url: {
+        doc: 'The url of the  tls-checker microservice.',
+        format: 'url',
+        default: null
       },
-      iP: {
-        doc: 'The IP address of the tls-checker microservice.',
-        format: 'ipaddress',
-        default: '240.0.0.0'
-      }
+      active: {
+        doc: 'Whether or not the tls-checker microservice is active.',
+        format: 'Boolean',
+        default: true
+      },
+      runJobRoute: '/run-job',
+      testResultRoute: '/test-results'
     }
   }
 };
@@ -67,5 +73,6 @@ const schema = {
 const config = convict(schema);
 config.loadFile(path.join(__dirname, `config.${config.get('env')}.json`));
 config.validate();
+console.log('(*) Local config file loaded');
 
 module.exports = config;
