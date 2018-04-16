@@ -4,13 +4,9 @@ let testerModels;
   const fs = require('fs');
   const { promisify } = require('util');
   const promiseToReadDir = promisify(fs.readdir);
-
-  const modelFileNames = await promiseToReadDir(__dirname);
-  
-  const subModelFileNames = modelFileNames.filter( fileName => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11)) );
-  
   const modelNameParts = {domain: 0, testerType: 1, fileExtension: 2};
-  
+  const modelFileNames = await promiseToReadDir(__dirname);  
+  const subModelFileNames = modelFileNames.filter( fileName => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11)) );  
   testerModels = subModelFileNames.map(fileName => ( { ...require(`./${fileName}`), name: fileName.split('.')[modelNameParts.testerType] } ) );
 })();
 
