@@ -19,15 +19,13 @@ async function attack(testJob, testerConfig) {
 
 
 
-  const { res, payload } = await Wreck.post(`${url}${runJobRoute}`);
+  const { res, payload } = await Wreck.post(`${url}${runJobRoute}`, {headers: {'content-type': 'application/vnd.api+json'}, payload: testJob});
   const testPlan = payload.toString();
   console.log(testPlan);
 
-  subscribeToTesterProgress(name, url, testResultRoute);
+  if(!testJob.data.attributes.planOnly) subscribeToTesterProgress(name, url, testResultRoute);
 
   return testPlan;
-
-
 
 
 };
