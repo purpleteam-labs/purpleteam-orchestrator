@@ -11,6 +11,7 @@ async function deployAppScanner(config) {
 
 async function attack(testJob, testerConfig) {
   const { name, url, active, runJobRoute, testResultRoute } = testerConfig;
+  const { data: { attributes: { progressUpdate, planOnly } } } = testJob;
 
   if (!active) return TestPlanUnavailable(name);
   
@@ -23,7 +24,7 @@ async function attack(testJob, testerConfig) {
   const testPlan = payload.toString();
   console.log(testPlan);
 
-  if(!testJob.data.attributes.planOnly) subscribeToTesterProgress(name, url, testResultRoute);
+  if(progressUpdate && !planOnly) subscribeToTesterProgress(name, url, testResultRoute);
 
   return testPlan;
 
