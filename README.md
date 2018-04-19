@@ -11,6 +11,10 @@ Along with the other components in the PurpleTeam solution:
   * purpleteam-tls-checker (TLS checker)
   * etc
 
+## Definitions
+
+Described [here](https://github.com/binarymist/purpleteam#definitions).
+
 ## Setup
 
 Once cloned, from the terminal run:
