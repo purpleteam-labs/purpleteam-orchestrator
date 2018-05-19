@@ -1,7 +1,7 @@
-const config = require('../config/config');
 const Hapi = require('hapi');
 const hapiJsonApi = require('@gar/hapi-json-api');
-const orchestration = require('./api/orchestration');
+const config = require('config/config');
+const orchestration = require('src/api/orchestration');
 
 const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.ip') });
 

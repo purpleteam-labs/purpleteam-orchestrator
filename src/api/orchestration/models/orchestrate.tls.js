@@ -1,4 +1,4 @@
-const { Orchestration: { TestPlanUnavailable } } = require('../../../strings');
+const { Orchestration: { TestPlanUnavailable } } = require('src/strings');
 
 async function attack(testJob, testerConfig) {
   const { name, url, active, runJobRoute, testResultRoute } = testerConfig;

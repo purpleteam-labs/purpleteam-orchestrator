@@ -1,4 +1,5 @@
-const server = require('./src/server');
+require('app-module-path/register');
+const server = require('src/server');
 
 const init = async () => {
   await server.registerPlugins();

@@ -32,6 +32,7 @@
   "homepage": "https://github.com/binarymist/purpleteam-app-scanner#readme",
   "dependencies": {
     "@gar/hapi-json-api": "git+https://github.com/binarymist/binarymist-hapi-jsonapi.git#upgradeToHapi17",
+    "app-module-path": "^2.2.0",
     "convict": "^4.1.0",
     "eventsource": "^1.0.5",
     "hapi": "^17.2.3",

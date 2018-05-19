@@ -1,4 +1,4 @@
-const { Orchestrate } = require('./models');
+const { Orchestrate } = require('src/api/orchestration/models');
 const routes = require('./routes');
 
 const applyRoutes = (server) => {
