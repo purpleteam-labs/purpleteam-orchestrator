@@ -15,7 +15,7 @@ const schema = {
       default: 2000,
       env: 'PORT'
     },
-    iP: {
+    ip: {
       doc: 'The IP address of this host.',
       format: 'ipaddress',
       default: '240.0.0.0'

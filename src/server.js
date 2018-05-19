@@ -3,7 +3,7 @@ const Hapi = require('hapi');
 const hapiJsonApi = require('@gar/hapi-json-api');
 const orchestration = require('./api/orchestration');
 
-const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.iP') });
+const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.ip') });
 
 const infrastructuralPlugins = [
   {

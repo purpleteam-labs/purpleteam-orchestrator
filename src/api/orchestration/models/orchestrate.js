@@ -22,9 +22,6 @@ class Orchestrate {
   async testTeam(testJob) {
 
 
-    // Todo: get collection of testers from config.
-
-
     // Create job for each tester
     //    Each job contains collection of testSession, if relevant for tester.
 
