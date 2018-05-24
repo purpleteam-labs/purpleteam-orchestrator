@@ -22,6 +22,11 @@ class Orchestrate {
   async testTeam(testJob) {
 
 
+    const testJobClone = JSON.parse(JSON.stringify(testJob));
+    testJobClone.included.forEach(resourceObject => { if(resourceObject.type === 'testSession' && resourceObject.attributes && resourceObject.attributes.password) resourceObject.attributes.password = '******';} );
+    console.log(`\nThe build user supplied payload was:\n${JSON.stringify(testJobClone)}\n\n`);
+
+
     // Create job for each tester
     //    Each job contains collection of testSession, if relevant for tester.
 
