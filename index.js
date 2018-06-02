@@ -3,8 +3,8 @@ const server = require('src/server');
 
 const init = async () => {
   await server.registerPlugins();
-  const serverResponse = await server.start();
-  console.log(`purpleteam-orchestrator running at: ${serverResponse.info.uri}`); // eslint-disable-line no-console
+  const startedServer = await server.start();
+  startedServer.log(['startup'], `purpleteam-orchestrator running at: ${startedServer.info.uri} in ${process.env.NODE_ENV} mode.`);
 };
 
 process.on('unhandledRejection', (err) => {

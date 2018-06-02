@@ -8,6 +8,13 @@ const schema = {
     default: 'development',
     env: 'NOE_ENV'
   },
+  logger: {
+    level: {
+      doc: 'Write all log events with this level and below. Syslog levels used: https://github.com/winstonjs/winston#logging-levels',
+      format: ['emerg', 'alert', 'crit', 'error', 'warning', 'notice', 'info', 'debug'],
+      default: 'notice'
+    }
+  },
   host: {
     port: {
       doc: 'The port of this host.',
