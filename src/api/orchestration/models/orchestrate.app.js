@@ -1,9 +1,9 @@
+const log = require('purpleteam-logger').logger();
 const EventSource = require('eventsource');
-
-
 const Wreck = require('wreck');
+const { Orchestration: { TestPlanUnavailable } } = require('src/strings');
 
-const { Orchestration: { TestPlanUnavailable } } = require('../../../strings');
+
 
 async function deployAppScanner(config) {
 
@@ -22,7 +22,7 @@ async function attack(testJob, testerConfig) {
 
   const { res, payload } = await Wreck.post(`${url}${runJobRoute}`, {headers: {'content-type': 'application/vnd.api+json'}, payload: testJob});
   const testPlan = payload.toString();
-  console.log(testPlan);
+  log.notice(testPlan, {tags: ['orchestrate.app']});
 
   if(progressUpdate && !planOnly) subscribeToTesterProgress(name, url, testResultRoute);
 
@@ -41,7 +41,7 @@ function subscribeToTesterProgress(testerName, url, testResultRoute) {
   eventSource.addEventListener(`${testerName}TestingResult`, (event) => {      
     //const dataFormat = Object.prototype.hasOwnProperty.call(event, 'dataFormat') ? event.dataFormat : null;
     //console.log(dataFormat === 'json' ? JSON.parse(event.data) : event.data);
-    console.log(JSON.parse(event.data).testingResult);
+    log.notice(JSON.parse(event.data).testingResult, {tags: ['orchestrate.app']});
   });
 
 

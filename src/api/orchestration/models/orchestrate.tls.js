@@ -1,3 +1,4 @@
+const log = require('purpleteam-logger').logger();
 const { Orchestration: { TestPlanUnavailable } } = require('src/strings');
 
 async function attack(testJob, testerConfig) {
