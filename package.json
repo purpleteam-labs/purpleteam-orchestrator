@@ -36,7 +36,9 @@
     "convict": "^4.1.0",
     "eventsource": "^1.0.5",
     "hapi": "^17.2.3",
+    "hapi-good-winston": "^2.0.1",
     "path": "^0.12.7",
+    "purpleteam-logger": "git+ssh://github.com/binarymist/purpleteam-logger.git",
     "wreck": "^14.0.2"
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",
