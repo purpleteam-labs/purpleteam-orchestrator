@@ -4,7 +4,6 @@ const Wreck = require('wreck');
 const { Orchestration: { TestPlanUnavailable } } = require('src/strings');
 
 
-
 async function deployAppScanner(config) {
 
 };
