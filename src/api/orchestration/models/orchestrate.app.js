@@ -1,33 +1,43 @@
 const log = require('purpleteam-logger').logger();
 const EventSource = require('eventsource');
 const Wreck = require('wreck');
-const { Orchestration: { TestPlanUnavailable } } = require('src/strings');
+const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
 
 
 async function deployAppScanner(config) {
 
 };
 
-async function attack(testJob, testerConfig) {
-  const { name, url, active, runJobRoute, testResultRoute } = testerConfig;
-  const { data: { attributes: { progressUpdate, planOnly } } } = testJob;
+async function plan(testJob, testerConfig) {
+
+  const { name, url, active, testPlanRoute } = testerConfig;
 
   if (!active) return TestPlanUnavailable(name);
-  
+
+  const { res, payload } = await Wreck.post(`${url}${testPlanRoute}`, {headers: {'content-type': 'application/vnd.api+json'}, payload: testJob});
+  const testPlanPayload = payload.toString();
+  log.notice(testPlanPayload, {tags: ['orchestrate.app']});
+
+  return testPlanPayload;
+};
 
 
 
 
+
+
+async function attack(testJob, testerConfig) {
+  const { name, url, active, runJobRoute, testResultRoute } = testerConfig;
+
+  if (!active) return TesterUnavailable(name);
 
   const { res, payload } = await Wreck.post(`${url}${runJobRoute}`, {headers: {'content-type': 'application/vnd.api+json'}, payload: testJob});
-  const testPlan = payload.toString();
-  log.notice(testPlan, {tags: ['orchestrate.app']});
+  const runJobPayload = payload.toString();
+  log.notice(runJobPayload, {tags: ['orchestrate.app']});
 
-  if(progressUpdate && !planOnly) subscribeToTesterProgress(name, url, testResultRoute);
+  subscribeToTesterProgress(name, url, testResultRoute);
 
-  return testPlan;
-
-
+  return runJobPayload;
 };
 
 
@@ -50,5 +60,6 @@ function subscribeToTesterProgress(testerName, url, testResultRoute) {
 
 
 module.exports = {
+  plan,
   attack
 }

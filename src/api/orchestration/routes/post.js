@@ -2,6 +2,15 @@ const Boom = require('boom');
 
 module.exports = [{
   method: 'POST',
+  path: '/testplan',
+  handler: async (request, respToolkit) => {
+    const { model } = request.server.app;
+    const testPlan = await model.testTeamPlan(request.payload);
+
+    return respToolkit.response(testPlan).code(200);
+  }
+}, {
+  method: 'POST',
   path: '/test',
   handler: async (request, respToolkit) => { // eslint-disable-line no-unused-vars
 
@@ -19,7 +28,7 @@ module.exports = [{
 
 
     const { model } = request.server.app;
-    const testPlan = await model.testTeam(request.payload);
+    const runJob = await model.testTeamAttack(request.payload);
 
 
 
@@ -29,7 +38,7 @@ module.exports = [{
 //    If planOnly is passed, when the plan is returned, the tester is done
 //    Always return the plan to the CLI
 
-    return respToolkit.response(testPlan).code(202);
+    return respToolkit.response(runJob).code(202);
     // If we return JSON API data then it needs to meet the jsonapi spec (http://jsonapi.org/format/#content-negotiation-servers) and the media type (Content-Type) must be application/vnd.api+json
 
 

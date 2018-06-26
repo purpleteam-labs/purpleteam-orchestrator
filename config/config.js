@@ -41,6 +41,7 @@ const schema = {
         format: 'Boolean',
         default: true
       },
+      testPlanRoute: '/test-plan',
       runJobRoute: '/run-job',
       testResultRoute: '/test-results'
     },
@@ -56,6 +57,7 @@ const schema = {
         format: 'Boolean',
         default: true
       },
+      testPlanRoute: '/test-plan',
       runJobRoute: '/run-job',
       testResultRoute: '/test-results'      
     },
@@ -71,6 +73,7 @@ const schema = {
         format: 'Boolean',
         default: true
       },
+      testPlanRoute: '/test-plan',
       runJobRoute: '/run-job',
       testResultRoute: '/test-results'
     }

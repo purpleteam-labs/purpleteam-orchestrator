@@ -21,12 +21,13 @@ class Orchestrate {
     
   }
 
-  async testTeam(testJob) {
 
+
+  async testTeamAction(testJob, action) {
 
     const testJobClone = JSON.parse(JSON.stringify(testJob));
     testJobClone.included.forEach(resourceObject => { if(resourceObject.type === 'testSession' && resourceObject.attributes && resourceObject.attributes.password) resourceObject.attributes.password = '******';} );
-    this.log.notice(`The build user supplied payload was:\n${JSON.stringify(testJobClone)}\n\n`, {tags: ['orchestrate']});
+    this.log.notice(`The build user supplied payload to "${action}" with, was:\n${JSON.stringify(testJobClone)}\n\n`, {tags: ['orchestrate']});
 
 
     // Create job for each tester
@@ -35,8 +36,8 @@ class Orchestrate {
     // Deploy each tester.
     
 
-    const combinedTestPlan = testerModels.map( testerModel => 
-      testerModel.attack(testJob, this.testersConfig[testerModel.name])
+    const combinedTestActionResult = testerModels.map( testerModel => 
+      testerModel[action](testJob, this.testersConfig[testerModel.name])
     );
 
 
@@ -69,9 +70,22 @@ class Orchestrate {
 */
 
 
-    return (await Promise.all(combinedTestPlan)).reduce((combined, plan) => `${combined}\n\n${plan}`);
-    
-    
+    return (await Promise.all(combinedTestActionResult)).reduce((combined, testerPayload) => `${combined}\n\n${testerPayload}`);
+
+  }
+
+
+
+  async testTeamPlan(testJob) {
+
+    return await this.testTeamAction(testJob, 'plan');
+
+  }
+
+
+  async testTeamAttack(testJob) {
+
+    return await this.testTeamAction(testJob, 'attack');
 
   }
 }
