@@ -14,11 +14,29 @@ async function plan(testJob, testerConfig) {
 
   if (!active) return TestPlanUnavailable(name);
 
-  const { res, payload } = await Wreck.post(`${url}${testPlanRoute}`, {headers: {'content-type': 'application/vnd.api+json'}, payload: testJob});
-  const testPlanPayload = payload.toString();
-  log.notice(testPlanPayload, {tags: ['orchestrate.app']});
 
-  return testPlanPayload;
+
+  const promisedResponse = Wreck.post(`${url}${testPlanRoute}`, {headers: {'content-type': 'application/vnd.api+json'}, payload: testJob});
+  try {
+    const { res, payload } = await promisedResponse;
+    const testPlanPayload = payload.toString();
+
+    log.notice(`\n${testPlanPayload}`, {tags: ['orchestrate.app']});
+    return testPlanPayload;
+  }
+  catch (e) {
+    const handle = {
+      errorMessageFrame: innerMessage => `Error occured while attempting to retrieve the test plan. Error was: ${innerMessage}`,
+      buildUserMessage: '"App tester is currently unreachable"',
+      isBoom: () => e.output.payload,
+      notBoom: () => e.message
+    };
+    log.alert(handle.errorMessageFrame(JSON.stringify(handle[e.isBoom ? 'isBoom' : 'notBoom']()), {tags: ['orchestrate.app']}));
+
+    return handle.errorMessageFrame(handle.buildUserMessage);
+
+  }
+
 };
 
 
