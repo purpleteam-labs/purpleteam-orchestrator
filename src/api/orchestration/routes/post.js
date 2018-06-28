@@ -1,13 +1,21 @@
 const Boom = require('boom');
+const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserConfig');
+const Joi = require('joi');
 
 module.exports = [{
   method: 'POST',
   path: '/testplan',
-  handler: async (request, respToolkit) => {
-    const { model } = request.server.app;
-    const testPlan = await model.testTeamPlan(request.payload);
+  options: {
+    validate: {
+      // Todo: Provide full validation. Test with passing an empty payload too.
+      payload: buildUserConfigSchema
+    },
+    handler: async (request, respToolkit) => {
+      const { model } = request.server.app;
+      const testPlan = await model.testTeamPlan(request.payload);
 
-    return respToolkit.response(testPlan).code(200);
+      return respToolkit.response(testPlan).code(200);
+    }
   }
 }, {
   method: 'POST',
