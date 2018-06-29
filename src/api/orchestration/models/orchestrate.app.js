@@ -26,7 +26,7 @@ async function plan(testJob, testerConfig) {
   }
   catch (e) {
     const handle = {
-      errorMessageFrame: innerMessage => `Error occured while attempting to retrieve the test plan. Error was: ${innerMessage}`,
+      errorMessageFrame: innerMessage => `Error occured while attempting to retrieve your test plan. Error was: ${innerMessage}`,
       buildUserMessage: '"App tester is currently unreachable"',
       isBoom: () => e.output.payload,
       notBoom: () => e.message

@@ -1,3 +1,4 @@
+//const log = require('purpleteam-logger').logger();
 const Boom = require('boom');
 const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserConfig');
 const Joi = require('joi');
@@ -6,7 +7,17 @@ module.exports = [{
   method: 'POST',
   path: '/testplan',
   options: {
+
     validate: {
+      failAction: async (request, respToolkit, err) => {        
+        request.log(['error', 'post'], `An error occured while validating a build user's config. The following are the details:\nbuild user payload: ${JSON.stringify(JSON.parse(request.payload), null, '  ')}\nname: ${err.name}\nmessage: ${err.message}\ndetails: ${JSON.stringify(err.details, null, '  ')}\noutput: ${JSON.stringify(err.output, null, '  ')} `);
+
+        // https://github.com/hapijs/boom#faq
+        // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
+        const error = Boom.badRequest(err.message);
+        error.output.payload.name = err.name;
+        throw error;
+      },
       // Todo: Provide full validation. Test with passing an empty payload too.
       payload: buildUserConfigSchema
     },
