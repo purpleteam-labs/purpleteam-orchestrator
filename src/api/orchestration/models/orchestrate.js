@@ -27,7 +27,7 @@ class Orchestrate {
 
     const testJobClone = JSON.parse(JSON.stringify(testJob));
     testJobClone.included.forEach(resourceObject => { if(resourceObject.type === 'testSession' && resourceObject.attributes && resourceObject.attributes.password) resourceObject.attributes.password = '******';} );
-    this.log.notice(`The build user supplied payload to "${action}" with, was:\n${JSON.stringify(testJobClone)}\n\n`, {tags: ['orchestrate']});
+    this.log.notice(`The build user supplied payload to "${action}" with, was:\n${JSON.stringify(testJobClone, null, '  ')}\n\n`, {tags: ['orchestrate']});
 
 
     // Create job for each tester
