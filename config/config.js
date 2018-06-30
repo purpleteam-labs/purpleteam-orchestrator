@@ -77,6 +77,13 @@ const schema = {
       runJobRoute: '/run-job',
       testResultRoute: '/test-results'
     }
+  },
+  buildUserConfig: {
+    version: {
+      doc: 'The version of the build user config accepted by this API.',
+      format: ['0.1.0-alpha.1'],
+      default: '0.1.0-alpha.1'
+    }
   }
 };
 
