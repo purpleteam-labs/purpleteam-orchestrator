@@ -31,17 +31,13 @@ async function plan(testJob, testerConfig) {
       isBoom: () => e.output.payload,
       notBoom: () => e.message
     };
-    log.alert(handle.errorMessageFrame(JSON.stringify(handle[e.isBoom ? 'isBoom' : 'notBoom']()), {tags: ['orchestrate.app']}));
+    log.alert(handle.errorMessageFrame(JSON.stringify(handle[e.isBoom ? 'isBoom' : 'notBoom']()) ), {tags: ['orchestrate.app']} );
 
     return handle.errorMessageFrame(handle.buildUserMessage);
 
   }
 
 };
-
-
-
-
 
 
 async function attack(testJob, testerConfig) {
