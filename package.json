@@ -37,6 +37,7 @@
     "eventsource": "^1.0.5",
     "hapi": "^17.2.3",
     "hapi-good-winston": "^2.0.1",
+    "joi": "^13.2.0",
     "path": "^0.12.7",
     "purpleteam-logger": "git+ssh://github.com/binarymist/purpleteam-logger.git",
     "wreck": "^14.0.2"
