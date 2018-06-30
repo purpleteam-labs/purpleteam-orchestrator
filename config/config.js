@@ -28,6 +28,18 @@ const schema = {
       default: '240.0.0.0'
     }
   },
+  sut: {
+    browser: {
+      doc: 'The type of browser to run tests through.',
+      format: ['chrome', 'firefox'],
+      default: 'chrome'
+    },
+    reportFormat: {
+      doc: 'The supported formats that reports may be written in.',
+      format: ['html', 'json', 'md'],
+      default: 'html'
+    }
+  },
   testers: {    
     app: {
       name: 'app',
