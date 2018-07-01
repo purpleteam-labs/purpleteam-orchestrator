@@ -21,7 +21,21 @@ const buildUserConfigSchema = Joi.object({
       loggedInIndicator: Joi.string().required().error(() => 'A loggedInIndicator is required by the App slave in order to know if a login was successful'),
       reportFormats: Joi.array().items(Joi.string().valid(config.getSchema().properties.sut.properties.reportFormat.format).lowercase()).unique().default([config.get('sut.reportFormat')])
     }).required(),
-    relationships: Joi.object().required()
+    // Relationships: (http://jsonapi.org/format/#document-resource-object-relationships)
+    relationships: Joi.object({      
+      data: Joi.alternatives().try(
+        Joi.array().items(Joi.object({
+          type: Joi.string().valid('testSession').required(),
+          id: Joi.string().min(2).regex(/^[a-z0-9_-]+/i).required()
+        })),
+        Joi.object({
+          type: Joi.string().valid('testSession').required(),
+          id: Joi.string().min(2).regex(/^[a-z0-9_-]+/i).required()
+        })
+      )
+
+      
+    }).required()
   }).required(),
   included: Joi.array().required()
 });
