@@ -1,15 +1,11 @@
 const Joi = require('joi');
 const config = require('config/config');
-const Boom = require('boom');
-debugger;
 const configSchemaProps = config.getSchema().properties;
 
 
-
 const internals = {
-  includedCount: 0,
-  testSessionCount: 0,
-  routeCount: 0
+  countOfTestSessions: 0,
+  countOfUniqueRoutes: 0
 }
 
 const includedSchema = () => {
@@ -47,51 +43,65 @@ const includedSchema = () => {
     return array.map((current, index) => schema);
   };
 
-  return Joi.array().items(...duplicateSchemaItems(internals.testSessionCount, testSessionSchema), ...duplicateSchemaItems(internals.routeCount, routeSchema));
+  return Joi.array().items(...duplicateSchemaItems(internals.countOfTestSessions, testSessionSchema), ...duplicateSchemaItems(internals.countOfUniqueRoutes, routeSchema));
 
 };
 
 
-const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
-  
+const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {  
   const buildUserConfig = JSON.parse(serialisedBuildUserConfig);
-  try {  
-    const testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
+  let testSessions;
+  try {
+    testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
+    const isTestSessions = {
+      'false': () => { throw new SyntaxError('The supplied build user config had no testSession(s)') },
+      'true': () => { internals.countOfTestSessions = testSessions.length; }
+    };
+    isTestSessions[!!testSessions.length]();
   } catch(e) {
-    debugger
-    if (e.message === 'Cannot read property \'filter\' of undefined') throw new SyntaxError('The \"included\" property was missing from the supplied build user config');
-  }
-
-  internals.testSessionCount = testSessions.length;
+    if (e.message === 'Cannot read property \'filter\' of undefined') throw new SyntaxError('["included" property was missing]');
+    if (e instanceof SyntaxError) throw e;
+  }  
   return testSessions;
 };
 
 
-const hydrateAndCountUniqueRouteResourceIdentifiers = () => {
+const hydrateAndCountUniqueRouteResourceIdentifiers = (testSessions) => {
+  let routeResourceIdentifierObjects = [];
+  const isRouteResourceIdentifierObjectsPerTestSession = {
+    'false': () => {
+      throw new SyntaxError('child "included" fails becuase ["testSession" fails because ["relationships" fails becuase [data has no elements of "type" "route"]]]')
+    },
+    'true': (routeResourceIdentifierObjectsPerTestSession) => {
+      routeResourceIdentifierObjects.push(...routeResourceIdentifierObjectsPerTestSession);
+    }
+  };
+  testSessions.forEach((current) => {
+    debugger;
+    let routeResourceIdentifierObjectsPerTestSession = [];
+    try {
+      routeResourceIdentifierObjectsPerTestSession.push(...current.relationships.data.filter(element => element.type === 'route'));
+      isRouteResourceIdentifierObjectsPerTestSession[!!routeResourceIdentifierObjectsPerTestSession.length](routeResourceIdentifierObjectsPerTestSession);
 
+    }
+    catch (e) {
+      debugger
+      if (e.message === 'Cannot read property \'data\' of undefined') throw new SyntaxError('child "included" fails because ["testSession" fails becuase ["relationships" is missing]]');
+      if (e.message === 'Cannot read property \'filter\' of undefined') throw new SyntaxError('child "included" fails because ["testSession" fails becuase ["relationships" fails becuase ["data" is missing]]]');
+      
+      debugger
+    }
+
+  });
+
+  internals.countOfUniqueRoutes = [...(new Set(routeResourceIdentifierObjects.map(item => item.id)))].length;
 };
 
 
 const buildUserConfigSchema = serialisedBuildUserConfig => {
   debugger;
-
   const testSessions = hydrateAndCountTestSessions(serialisedBuildUserConfig);
-
-  let routeResourceIdentifierObjects = [];
-
-  testSessions.forEach((current) => {
-    debugger;
-    routeResourceIdentifierObjects.push(...current.relationships.data.filter(element => element.type === 'route'));
-
-  });
-
-  const uniqueRouteResourceIdentifierObjects = [...(new Set(routeResourceIdentifierObjects))];
-
-  internals.routeCount = uniqueRouteResourceIdentifierObjects.length;
-
-  //if(includedCount < 2 || !!(includedCount % 2)) throw new Error('child "included" fails because ["included" does not contain at least a pair of "testSession" and "route" objects]');
-
-  //internals.includedCount = includedCount;
+  hydrateAndCountUniqueRouteResourceIdentifiers(testSessions);
   return Joi.validate(serialisedBuildUserConfig, schema);
 };
 
