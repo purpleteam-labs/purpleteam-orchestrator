@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const config = require('config/config');
+const Boom = require('boom');
 debugger;
 const configSchemaProps = config.getSchema().properties;
 
@@ -44,23 +45,37 @@ const includedSchema = () => {
   const duplicateSchemaItems = (itemCount, schema) => {
     const array = Array.apply(null, Array(itemCount));
     return array.map((current, index) => schema);
-  };  
-
-  const sus = [...duplicateSchemaItems(internals.testSessionCount, testSessionSchema), ...duplicateSchemaItems(internals.routeCount, routeSchema)];
+  };
 
   return Joi.array().items(...duplicateSchemaItems(internals.testSessionCount, testSessionSchema), ...duplicateSchemaItems(internals.routeCount, routeSchema));
 
+};
 
 
+const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
+  
+  const buildUserConfig = JSON.parse(serialisedBuildUserConfig);
+  try {  
+    const testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
+  } catch(e) {
+    debugger
+    if (e.message === 'Cannot read property \'filter\' of undefined') throw new SyntaxError('The \"included\" property was missing from the supplied build user config');
+  }
+
+  internals.testSessionCount = testSessions.length;
+  return testSessions;
+};
+
+
+const hydrateAndCountUniqueRouteResourceIdentifiers = () => {
 
 };
+
 
 const buildUserConfigSchema = serialisedBuildUserConfig => {
   debugger;
 
-  const buildUserConfig = JSON.parse(serialisedBuildUserConfig);
-  const testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
-  internals.testSessionCount = testSessions.length;
+  const testSessions = hydrateAndCountTestSessions(serialisedBuildUserConfig);
 
   let routeResourceIdentifierObjects = [];
 

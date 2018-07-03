@@ -15,8 +15,13 @@ const Orchestration = {
       configClone = config;
     }
 
-    configClone.included.forEach(resourceObject => { if(resourceObject.type === 'testSession' && resourceObject.attributes && resourceObject.attributes.password) resourceObject.attributes.password = '******';} );
-    return JSON.stringify(configClone, null, '  ');
+    try {
+      configClone.included.forEach(resourceObject => { if(resourceObject.type === 'testSession' && resourceObject.attributes && resourceObject.attributes.password) resourceObject.attributes.password = '******';} );
+      return JSON.stringify(configClone, null, '  ');
+    }
+    catch (e) {
+      return 'JSON parsing failed. Build user config was incomplete or invalid JSON';
+    }
   }
 
 }
