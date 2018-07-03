@@ -59,7 +59,11 @@ const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
     };
     isTestSessions[!!testSessions.length]();
   } catch(e) {
-    if (e.message === 'Cannot read property \'filter\' of undefined') throw new SyntaxError('["included" property was missing]');
+    if (e.message === 'Cannot read property \'filter\' of undefined') {
+      let validationError = new Error('child "included" fails becuase ["included" is required]');
+      validationError.name = 'ValidationError';
+      throw validationError;
+    }
     if (e instanceof SyntaxError) throw e;
   }  
   return testSessions;
