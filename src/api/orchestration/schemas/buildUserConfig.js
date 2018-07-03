@@ -4,7 +4,89 @@ debugger;
 const configSchemaProps = config.getSchema().properties;
 
 
-const buildUserConfigSchema = Joi.object({
+
+const internals = {
+  includedCount: 0,
+  testSessionCount: 0,
+  routeCount: 0
+}
+
+const includedSchema = () => {
+  debugger;
+
+  const testSessionSchema =  Joi.object({
+    type: Joi.string().required().valid('testSession'),
+    id: Joi.string().min(2).regex(/^[a-z0-9_-]+/i).required(),
+    attributes: Joi.object({
+      username: Joi.string().min(2).required(),
+      password: Joi.string().min(2).required(),
+      // Sourced from app-scanner config
+      aScannerAttackStrength: Joi.string().valid(['LOW', 'MEDIUM', 'HIGH', 'INSANE']),
+      aScannerAlertThreshold: Joi.string().valid(['LOW', 'MEDIUM', 'HIGH']),
+      alertThreshold: Joi.number().integer()
+    }),
+    relationships: Joi.object({
+      data: Joi.array().items(
+        Joi.object({
+          type: Joi.string().valid('route').required(),
+          id: Joi.string().min(2).regex(/^\/[a-z]+/i).required()
+        }) // Could be many of these
+      )
+    }).required()
+  }).required();
+
+  const routeSchema = Joi.object({
+    type: Joi.string().valid('route').required(),
+    id: Joi.string().min(2).regex(/^\/[a-z]+/i).required(),
+    attributes: Joi.object()
+  }).required();
+
+  const duplicateSchemaItems = (itemCount, schema) => {
+    const array = Array.apply(null, Array(itemCount));
+    return array.map((current, index) => schema);
+  };  
+
+  const sus = [...duplicateSchemaItems(internals.testSessionCount, testSessionSchema), ...duplicateSchemaItems(internals.routeCount, routeSchema)];
+
+  return Joi.array().items(...duplicateSchemaItems(internals.testSessionCount, testSessionSchema), ...duplicateSchemaItems(internals.routeCount, routeSchema));
+
+
+
+
+};
+
+const buildUserConfigSchema = serialisedBuildUserConfig => {
+  debugger;
+
+  const buildUserConfig = JSON.parse(serialisedBuildUserConfig);
+  const testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
+  internals.testSessionCount = testSessions.length;
+
+  let routeResourceIdentifierObjects = [];
+
+  testSessions.forEach((current) => {
+    debugger;
+    routeResourceIdentifierObjects.push(...current.relationships.data.filter(element => element.type === 'route'));
+
+  });
+
+  const uniqueRouteResourceIdentifierObjects = [...(new Set(routeResourceIdentifierObjects))];
+
+  internals.routeCount = uniqueRouteResourceIdentifierObjects.length;
+
+  //if(includedCount < 2 || !!(includedCount % 2)) throw new Error('child "included" fails because ["included" does not contain at least a pair of "testSession" and "route" objects]');
+
+  //internals.includedCount = includedCount;
+  return Joi.validate(serialisedBuildUserConfig, schema);
+};
+
+
+
+
+
+
+
+const schema = Joi.object({
   // Resource Object (http://jsonapi.org/format/#document-resource-objects)
   data: Joi.object({
     type: Joi.string().required().valid('testRun'),
@@ -39,13 +121,15 @@ const buildUserConfigSchema = Joi.object({
     }).required()
   }).required(),
   // Array of Resource Object.
-  included: Joi.array().items(
+  included: Joi.lazy(includedSchema).required()/*Joi.array().items(
+    
     Joi.object({
       type: Joi.string().required().valid('testSession'),
       id: Joi.string().min(2).regex(/^[a-z0-9_-]+/i).required(),
       attributes: Joi.object({
         username: Joi.string().min(2).required(),
         password: Joi.string().min(2).required(),
+        // Sourced from app-scanner config
         aScannerAttackStrength: Joi.string().valid(['LOW', 'MEDIUM', 'HIGH', 'INSANE']),
         aScannerAlertThreshold: Joi.string().valid(['LOW', 'MEDIUM', 'HIGH']),
         alertThreshold: Joi.number().integer()
@@ -57,16 +141,16 @@ const buildUserConfigSchema = Joi.object({
             id: Joi.string().min(2).regex(/^\/[a-z]+/i).required()
           }) // Could be many of these
         )
-      })
+      }).required()
     }).required(),
     Joi.object({
       type: Joi.string().valid('route').required(),
       id: Joi.string().min(2).regex(/^\/[a-z]+/i).required(),
       attributes: Joi.object()
-    })
+    }).required()
 
-  ).required()
-
+  ).length(count).required()
+*/
 
   
 });
