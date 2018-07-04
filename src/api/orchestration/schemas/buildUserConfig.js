@@ -25,16 +25,16 @@ const includedSchema = () => {
     relationships: Joi.object({
       data: Joi.array().items(
         Joi.object({
-          type: Joi.string().valid('route').required(),
-          id: Joi.string().min(2).regex(/^\/[a-z]+/i).required()
+          type: Joi.string().required().valid('route'),
+          id: Joi.string().required().min(2).regex(/^\/[a-z]+/i)
         }) // Could be many of these
       )
     }).required()
   }).required();
 
   const routeSchema = Joi.object({
-    type: Joi.string().valid('route').required(),
-    id: Joi.string().min(2).regex(/^\/[a-z]+/i).required(),
+    type: Joi.string().required().valid('route'),
+    id: Joi.string().required().min(2).regex(/^\/[a-z]+/i),
     attributes: Joi.object()
   }).required();
 
@@ -42,14 +42,8 @@ const includedSchema = () => {
     const array = Array.apply(null, Array(itemCount));
     return array.map((current, index) => schema);
   };
-
   const items = [...duplicateSchemaItems(internals.countOfTestSessions, testSessionSchema), ...duplicateSchemaItems(internals.countOfUniqueRoutes, routeSchema)];
-  return Joi.array().items(...items).length(items.length).error(err => {
-    const validationError = new Error(`child "included" fails because ["included" must contain ${err[0].context.limit} items]. ${err[0].context.value.length} items were provided. This could be because one of the items was invalid, check that they are all valid`);
-    validationError.name = 'ValidationError';
-    return validationError;
-  });
-
+  return Joi.array().items(...items).length(items.length).error(() => `One or more of the resource objects appear to be invalid. Check their syntax and structure`);
 };
 
 
