@@ -43,7 +43,12 @@ const includedSchema = () => {
     return array.map((current, index) => schema);
   };
 
-  return Joi.array().items(...duplicateSchemaItems(internals.countOfTestSessions, testSessionSchema), ...duplicateSchemaItems(internals.countOfUniqueRoutes, routeSchema));
+  const items = [...duplicateSchemaItems(internals.countOfTestSessions, testSessionSchema), ...duplicateSchemaItems(internals.countOfUniqueRoutes, routeSchema)];
+  return Joi.array().items(...items).length(items.length).error(err => {
+    const validationError = new Error(`child "included" fails because ["included" must contain ${err[0].context.limit} items]. ${err[0].context.value.length} items were provided. This could be because one of the items was invalid, check that they are all valid`);
+    validationError.name = 'ValidationError';
+    return validationError;
+  });
 
 };
 
@@ -54,7 +59,11 @@ const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
   try {
     testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
     const isTestSessions = {
-      'false': () => { throw new SyntaxError('The supplied build user config had no testSession(s)') },
+      'false': () => {
+        let validationError = new Error('child "included" fails because [at least one "testSession" is required]')
+        validationError.name = 'ValidationError';
+        throw validationError;
+      },
       'true': () => { internals.countOfTestSessions = testSessions.length; }
     };
     isTestSessions[!!testSessions.length]();
@@ -64,7 +73,7 @@ const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
       validationError.name = 'ValidationError';
       throw validationError;
     }
-    if (e instanceof SyntaxError) throw e;
+    throw e;
   }  
   return testSessions;
 };
