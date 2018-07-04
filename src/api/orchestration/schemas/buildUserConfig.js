@@ -15,8 +15,8 @@ const includedSchema = () => {
     type: Joi.string().required().valid('testSession'),
     id: Joi.string().min(2).regex(/^[a-z0-9_-]+/i).required(),
     attributes: Joi.object({
-      username: Joi.string().min(2).required(),
-      password: Joi.string().min(2).required(),
+      username: Joi.string().required().min(2),
+      password: Joi.string().required().min(2),
       // Sourced from app-scanner config
       aScannerAttackStrength: Joi.string().valid(['LOW', 'MEDIUM', 'HIGH', 'INSANE']),
       aScannerAlertThreshold: Joi.string().valid(['LOW', 'MEDIUM', 'HIGH']),
@@ -35,7 +35,17 @@ const includedSchema = () => {
   const routeSchema = Joi.object({
     type: Joi.string().required().valid('route'),
     id: Joi.string().required().min(2).regex(/^\/[a-z]+/i),
-    attributes: Joi.object()
+    attributes: Joi.object({
+      attackFields: Joi.array().min(0).items(
+        Joi.object({
+          name: Joi.string().required(),
+          value: Joi.string().allow(''),
+          visible: Joi.boolean()
+        }).optionalKeys('visible')
+      ),
+      method: Joi.string().valid(['GET', 'PUT', 'POST']),
+      submit: Joi.string()
+    })
   }).required();
 
   const duplicateSchemaItems = (itemCount, schema) => {
@@ -43,7 +53,7 @@ const includedSchema = () => {
     return array.map((current, index) => schema);
   };
   const items = [...duplicateSchemaItems(internals.countOfTestSessions, testSessionSchema), ...duplicateSchemaItems(internals.countOfUniqueRoutes, routeSchema)];
-  return Joi.array().items(...items).length(items.length).error(() => `One or more of the resource objects appear to be invalid. Check their syntax and structure`);
+  return Joi.array().items(...items).length(items.length);//.error(() => `one or more of the resource objects appear to be invalid. Check their syntax and structure`);
 };
 
 
@@ -54,7 +64,7 @@ const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
     testSessions = buildUserConfig.included.filter(element => element.type === 'testSession');
     const isTestSessions = {
       'false': () => {
-        let validationError = new Error('child "included" fails because [at least one "testSession" is required]')
+        const validationError = new Error('child "included" fails because [at least one "testSession" is required]')
         validationError.name = 'ValidationError';
         throw validationError;
       },
@@ -63,7 +73,7 @@ const hydrateAndCountTestSessions = (serialisedBuildUserConfig) => {
     isTestSessions[!!testSessions.length]();
   } catch(e) {
     if (e.message === 'Cannot read property \'filter\' of undefined') {
-      let validationError = new Error('child "included" fails becuase ["included" is required]');
+      const validationError = new Error('child "included" fails becuase ["included" is required]');
       validationError.name = 'ValidationError';
       throw validationError;
     }
@@ -77,30 +87,34 @@ const hydrateAndCountUniqueRouteResourceIdentifiers = (testSessions) => {
   let routeResourceIdentifierObjects = [];
   const isRouteResourceIdentifierObjectsPerTestSession = {
     'false': () => {
-      throw new SyntaxError('child "included" fails becuase ["testSession" fails because ["relationships" fails becuase [data has no elements of "type" "route"]]]')
+      const validationError = new Error('child "included" fails becuase ["testSession" fails because ["relationships" fails becuase [data has no elements of "type" "route"]]]');
+      validationError.name = 'ValidationError';
+      throw validationError;
     },
     'true': (routeResourceIdentifierObjectsPerTestSession) => {
       routeResourceIdentifierObjects.push(...routeResourceIdentifierObjectsPerTestSession);
     }
   };
-  testSessions.forEach((current) => {
-    debugger;
+  testSessions.forEach((current) => {    
     let routeResourceIdentifierObjectsPerTestSession = [];
     try {
       routeResourceIdentifierObjectsPerTestSession.push(...current.relationships.data.filter(element => element.type === 'route'));
       isRouteResourceIdentifierObjectsPerTestSession[!!routeResourceIdentifierObjectsPerTestSession.length](routeResourceIdentifierObjectsPerTestSession);
-
     }
-    catch (e) {
-      debugger
-      if (e.message === 'Cannot read property \'data\' of undefined') throw new SyntaxError('child "included" fails because ["testSession" fails becuase ["relationships" is missing]]');
-      if (e.message === 'Cannot read property \'filter\' of undefined') throw new SyntaxError('child "included" fails because ["testSession" fails becuase ["relationships" fails becuase ["data" is missing]]]');
-      
-      debugger
+    catch (e) {      
+      if (e.message === 'Cannot read property \'data\' of undefined') {
+        const validationError = new Error('child "included" fails because ["testSession" fails becuase ["relationships" is missing]]');
+        validationError.name = 'ValidationError';
+        throw validationError;
+      }
+      if (e.message === 'Cannot read property \'filter\' of undefined') {
+        const validationError = new Error('child "included" fails because ["testSession" fails becuase ["relationships" fails becuase ["data" is missing]]]');
+        validationError.name = 'ValidationError';
+        throw validationError;
+      }      
+      throw e;
     }
-
   });
-
   internals.countOfUniqueRoutes = [...(new Set(routeResourceIdentifierObjects.map(item => item.id)))].length;
 };
 
@@ -153,7 +167,7 @@ const schema = Joi.object({
     }).required()
   }).required(),
   // Array of Resource Object.
-  included: Joi.lazy(includedSchema).required()/*Joi.array().items(
+  included: Joi.lazy(includedSchema)/*.required().Joi.array().items(
     
     Joi.object({
       type: Joi.string().required().valid('testSession'),
