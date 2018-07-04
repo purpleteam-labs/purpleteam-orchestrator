@@ -1,3 +1,4 @@
+
 module.exports = {
   'extends': 'airbnb-base',
   rules: {
@@ -15,8 +16,19 @@ module.exports = {
         // enforce consistent line breaks inside function parentheses
     // https://eslint.org/docs/rules/function-paren-newline
     'function-paren-newline': ['error', 'multiline'],
+    //'import/no-unresolved': ['error', {'ignore': ['/home/kim/Source/purpleteam-orchestrator/config']}]
+    'import/no-unresolved': [{commonjs: true}]
   },
   env: {
-    'mocha': true
-  }
+    'node': true
+  },
+  settings: {
+    //eslint-plugin-import is broken: https://github.com/benmosher/eslint-plugin-import/issues/1131
+    //'import/resolver': {
+    //  'node': {
+    //    'paths': ['./config', 'config', './src', 'src'],
+    //    'moduleDirectories': ['node_modules', 'config', 'src', './src']
+    //  }
+    //}
+  }    
 };
