@@ -4,24 +4,27 @@ const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings'
 const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserConfig');
 const Joi = require('joi');
 
+const internals = {
+  validate: {
+    failAction: async (request, respToolkit, err) => {
+      request.log(['error', 'post'], `An error occured while validating a build user's config. The following are the details:\nbuild user payload: ${BuildUserConfigMaskPassword(request.payload)}\nname: ${err.name}\nmessage: ${err.message}\noutput: ${JSON.stringify(err.output, null, '  ')} `);
+
+      // https://github.com/hapijs/boom#faq
+      // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
+      const error = Boom.badRequest(err.message);
+      error.output.payload.name = err.name;
+      throw error;
+    },
+    // Todo: Provide full validation. Test with passing an empty payload too.
+    payload: buildUserConfigSchema
+  }
+};
+
 module.exports = [{
   method: 'POST',
   path: '/testplan',
   options: {
-
-    validate: {
-      failAction: async (request, respToolkit, err) => {
-        request.log(['error', 'post'], `An error occured while validating a build user's config. The following are the details:\nbuild user payload: ${BuildUserConfigMaskPassword(request.payload)}\nname: ${err.name}\nmessage: ${err.message}\noutput: ${JSON.stringify(err.output, null, '  ')} `);
-
-        // https://github.com/hapijs/boom#faq
-        // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
-        const error = Boom.badRequest(err.message);
-        error.output.payload.name = err.name;
-        throw error;
-      },
-      // Todo: Provide full validation. Test with passing an empty payload too.
-      payload: buildUserConfigSchema
-    },
+    validate: internals.validate,
     handler: async (request, respToolkit) => {
       const { model } = request.server.app;
       const testPlan = await model.testTeamPlan(request.payload);
