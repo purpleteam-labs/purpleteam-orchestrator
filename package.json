@@ -40,6 +40,8 @@
     "joi": "^13.2.0",
     "path": "^0.12.7",
     "purpleteam-logger": "git+ssh://github.com/binarymist/purpleteam-logger.git",
+    "redis": "^2.8.0",
+    "susie": "^3.0.0",
     "wreck": "^14.0.2"
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",
