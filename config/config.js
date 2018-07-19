@@ -28,6 +28,13 @@ const schema = {
       default: '240.0.0.0'
     }
   },
+  redis: {
+    clientCreationOptions: {
+      doc: 'The options used for creating the redis client.',
+      format: val => typeof val === 'object',
+      default: {}
+    }
+  },
   sut: {
     browser: {
       doc: 'The type of browser to run tests through.',

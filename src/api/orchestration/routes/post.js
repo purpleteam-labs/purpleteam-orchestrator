@@ -2,7 +2,7 @@
 const Boom = require('boom');
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
 const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserConfig');
-const Joi = require('joi');
+
 
 const internals = {
   validate: {

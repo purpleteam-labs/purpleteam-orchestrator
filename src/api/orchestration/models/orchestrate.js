@@ -15,12 +15,11 @@ let testerModels;
 
 class Orchestrate {
   constructor(options) {
-    const { log, testers } = options;
+    const { log, testers, testerWatcher } = options;
 
     this.log = log;
     this.testersConfig = testers;
-
-    
+    this.testerWatcher = testerWatcher;
   }
 
 
@@ -86,6 +85,21 @@ class Orchestrate {
 
     return await this.testTeamAction(testJob, 'attack');
 
+  }
+
+
+  initSSE(channel, event, respToolkit) {
+    this.testerWatcher.subscribe(channel, (channel, message) => {
+      const response = respToolkit.response(message);
+      const update = JSON.parse(response.source);
+
+      respToolkit.event( { id: update.timestamp, event: update.event, data: update.data } );      
+      debugger;    
+    });
+    const initialEvent = { id: Date.now(), event: event, data: { progress: `Initialising subscription to "${channel}" tester for the event "${event}"` } };
+    const initialResponse = respToolkit.event(initialEvent);
+    debugger;
+    return initialResponse;
   }
 }
 

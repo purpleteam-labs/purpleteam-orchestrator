@@ -1,23 +1,25 @@
 const redis = require('redis');
 
 let log;
-let subscriber;
+const subscribers = {};
 
 const init = (options) => {
-  log = options.log
-  subscriber = redis.createClient(options.redis);
+  log = options.log;  
+  options.channels.forEach((channel) => {
+    subscribers[channel] = redis.createClient(options.redis);
+  });
   return {subscribe};
 };
 
 
-const subscribe = (redisChannel, callback) => {  
-  subscriber.subscribe(redisChannel);
+const subscribe = (redisChannel, callback) => {
+  subscribers[redisChannel].subscribe(redisChannel);
   
-  subscriber.on('error', (error) => {
+  subscribers[redisChannel].on('error', (error) => {
     log.error(`Redis error: ${error}`);
   });
 
-  subscriber.on('message', callback);
+  subscribers[redisChannel].on('message', callback);
 };
 
 
