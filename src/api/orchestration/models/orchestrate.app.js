@@ -49,7 +49,7 @@ async function attack(testJob, testerConfig) {
   const runJobPayload = payload.toString();
   log.notice(runJobPayload, {tags: ['orchestrate.app']});
 
-  subscribeToTesterProgress(name, url, testResultRoute);
+  if (!runJobPayload.startsWith('Request ignored')) subscribeToTesterProgress(name, url, testResultRoute);
 
   return runJobPayload;
 };
