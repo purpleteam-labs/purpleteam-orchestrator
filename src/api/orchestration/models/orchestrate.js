@@ -100,6 +100,7 @@ class Orchestrate {
     const initialResponse = respToolkit.event(initialEvent);
     debugger;
     return initialResponse;
+    // To cancel the event stream: https://www.html5rocks.com/en/tutorials/eventsource/basics/#toc-canceling
   }
 }
 
