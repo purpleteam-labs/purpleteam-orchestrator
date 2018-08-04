@@ -7,11 +7,7 @@ const subscribers = {};
 const init = (options) => {
   log = options.log;
   redisOptions = options.redis;
-/*
-  options.baseChannels.forEach((channel) => {
-    subscribers[channel] = redis.createClient(options.redis);
-  });
-*/
+
   return {subscribe};
 };
 
