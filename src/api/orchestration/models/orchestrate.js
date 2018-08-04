@@ -49,7 +49,7 @@ class Orchestrate {
 
       respToolkit.event( { id: update.timestamp, event: update.event, data: update.data } );      
     });
-    const initialEvent = { id: Date.now(), event: event, data: { progress: `Initialising subscription to "${channel}" tester for the event "${event}"` } };
+    const initialEvent = { id: Date.now(), event: event, data: { progress: `Initialising subscription to "${channel}" channel for the event "${event}"` } };
     const initialResponse = respToolkit.event(initialEvent);
     return initialResponse;
     // To cancel the event stream:
