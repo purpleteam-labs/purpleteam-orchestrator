@@ -3,14 +3,14 @@ const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('s
 
 
 async function plan(testJob, testerConfig) { // eslint-disable-line consistent-return
-  const { name, url, active, testPlanRoute } = testerConfig; // eslint-disable-line object-curly-newline, no-unused-vars
+  const { name, url, active, testPlanRoute } = testerConfig; // eslint-disable-line no-unused-vars
 
   if (!active) return { name, message: TestPlanUnavailable(name) };
 }
 
 
 async function attack(testJob, testerConfig) { // eslint-disable-line consistent-return
-  const { name, url, active, runJobRoute, testResultRoute } = testerConfig; // eslint-disable-line object-curly-newline, no-unused-vars
+  const { name, url, active, runJobRoute, testResultRoute } = testerConfig; // eslint-disable-line no-unused-vars
 
   if (!active) return { name, message: TesterUnavailable(name) };
 }

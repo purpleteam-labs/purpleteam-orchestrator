@@ -1,5 +1,3 @@
 const Orchestrate = require('./orchestrate');
 
-module.exports = {
-  Orchestrate
-};
+module.exports = { Orchestrate };
