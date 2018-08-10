@@ -16,7 +16,8 @@ module.exports = {
     // https://eslint.org/docs/rules/function-paren-newline
     'function-paren-newline': ['error', 'multiline'],
     //'import/no-unresolved': ['error', {'ignore': ['/home/kim/Source/purpleteam-orchestrator/config']}]
-    'import/no-unresolved': [{commonjs: true}]
+    'import/no-unresolved': [{commonjs: true}],
+    'object-curly-newline': ['error', { 'multiline': true }]
   },
   env: {
     'node': true
