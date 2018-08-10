@@ -1,17 +1,15 @@
-const Boom = require('boom');
+const Boom = require('boom'); // eslint-disable-line
 const { testerNameSessionId } = require('src/api/orchestration/schemas/testers');
 
 const internals = {
   validate: {
-    failAction: async (request, respToolkit, err) => {
-      debugger;
+    failAction: async (request, respToolkit, err) => { // eslint-disable-line no-unused-vars
     },
     params: testerNameSessionId
   }
 };
 
 module.exports = [{
-  // The CLI should (optionally) be able to query the progress at any given time.
   method: 'GET',
   path: '/{testerName}-{sessionId}-tester-progress',
   options: {
@@ -21,15 +19,10 @@ module.exports = [{
       const { testerName, sessionId } = request.params;
       const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`;
       const event = 'testerProgress';
-      //const event = 'testerProgress'
       const response = model.initSSE(channel, event, respToolkit);
-      debugger;
       return response;
     }
   }
 
 
-
 }];
-
-
