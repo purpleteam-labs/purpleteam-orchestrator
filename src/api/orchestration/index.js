@@ -2,7 +2,7 @@ const { Orchestrate } = require('./models');
 const routes = require('./routes');
 
 const applyRoutes = (server) => {
-  // Plugin with multiple routes.  
+  // Plugin with multiple routes.
   server.route(routes);
 };
 
