@@ -56,7 +56,7 @@ const includedSchema = () => {
     ...duplicateSchemaItems(internals.countOfTestSessions, testSessionSchema),
     ...duplicateSchemaItems(internals.countOfUniqueRoutes, routeSchema)
   ];
-  return Joi.array().items(...items).length(items.length);//.error(() => `one or more of the resource objects appear to be invalid. Check their syntax and structure`);
+  return Joi.array().items(...items).length(items.length);
 };
 
 
@@ -95,7 +95,7 @@ const schema = Joi.object({
     }).required()
   }).required(),
   // Array of Resource Object.
-  included: Joi.lazy(includedSchema)/*.required().Joi.array().items(
+  included: Joi.lazy(includedSchema)/* .required().Joi.array().items(
     Joi.object({
       type: Joi.string().required().valid('testSession'),
       id: Joi.string().min(2).regex(/^[a-z0-9_-]+/i).required(),
@@ -170,7 +170,9 @@ const hydrateAndCountUniqueRouteResourceIdentifiers = (testSessions) => {
     const routeResourceIdentifierObjectsPerTestSession = [];
     try {
       routeResourceIdentifierObjectsPerTestSession.push(...current.relationships.data.filter(element => element.type === 'route'));
-      isRouteResourceIdentifierObjectsPerTestSession[!!routeResourceIdentifierObjectsPerTestSession.length](routeResourceIdentifierObjectsPerTestSession);
+      isRouteResourceIdentifierObjectsPerTestSession[
+        !!routeResourceIdentifierObjectsPerTestSession.length
+      ](routeResourceIdentifierObjectsPerTestSession);
     } catch (e) {
       if (e.message === 'Cannot read property \'data\' of undefined') {
         const validationError = new Error('child "included" fails because ["testSession" fails becuase ["relationships" is missing]]');
