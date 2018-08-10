@@ -1,11 +1,14 @@
 const Hapi = require('hapi');
 const hapiJsonApi = require('@gar/hapi-json-api');
+const sussie = require('susie');
+const good = require('good'); // eslint-disable-line import/no-extraneous-dependencies
 const config = require('config/config');
 const orchestration = require('src/api/orchestration');
+
 const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.ip') });
 const log = require('purpleteam-logger').init(config.get('logger'));
 
-const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher').init({log, redis: config.get('redis.clientCreationOptions')});
+const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher').init({ log, redis: config.get('redis.clientCreationOptions') });
 
 // hapi-good-winstone: https://github.com/alexandrebodin/hapi-good-winston
 //    default levels: https://github.com/alexandrebodin/hapi-good-winston/blob/master/lib/index.js
@@ -14,28 +17,28 @@ const reporters = {
     winstonReporter: [{
       module: 'hapi-good-winston',
       name: 'goodWinston',
-      args: [log, {levels: {ops: 'debug'}}]
+      args: [log, { levels: { ops: 'debug' } }]
     }]
   },
   production: {
     winstonReporter: [{
       module: 'hapi-good-winston',
       name: 'goodWinston',
-      args: [log, {levels: {ops: 'notice', response: 'notice', log: 'notice', request: 'notice'}}]
+      args: [log, { levels: { ops: 'notice', response: 'notice', log: 'notice', request: 'notice' } }]
     }]
   }
 };
 
 
 const infrastructuralPlugins = [
-  require('susie'),
+  sussie,
   {
-    plugin: hapiJsonApi,    
+    plugin: hapiJsonApi,
     options: {}
   },
   {
-    plugin: require('good'),
-    options: { reporters: reporters[process.env.NODE_ENV]}    
+    plugin: good,
+    options: { reporters: reporters[process.env.NODE_ENV] }
   }
 ];
 const domainPlugins = [
@@ -57,11 +60,11 @@ module.exports = {
     // https://hapijs.com/tutorials/plugins#user-content-registration-options
 
     await server.register(infrastructuralPlugins.concat(domainPlugins));
-    log.info('Server registered.', {tags: ['startup']});
+    log.info('Server registered.', { tags: ['startup'] });
   },
   start: async () => {
     await server.start();
-    log.info('Server started.', {tags: ['startup']});
+    log.info('Server started.', { tags: ['startup'] });
     return server;
   }
 
