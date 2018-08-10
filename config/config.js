@@ -47,7 +47,7 @@ const schema = {
       default: 'html'
     }
   },
-  testers: {    
+  testers: {
     app: {
       name: 'app',
       url: {
@@ -78,7 +78,7 @@ const schema = {
       },
       testPlanRoute: '/test-plan',
       runJobRoute: '/run-job',
-      testResultRoute: '/test-results'      
+      testResultRoute: '/test-results'
     },
     tls: {
       name: 'tls',
@@ -109,6 +109,5 @@ const schema = {
 const config = convict(schema);
 config.loadFile(path.join(__dirname, `config.${config.get('env')}.json`));
 config.validate();
-console.log('(*) Local config file loaded');
 
 module.exports = config;
