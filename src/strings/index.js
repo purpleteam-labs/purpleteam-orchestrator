@@ -7,9 +7,8 @@ const Orchestration = {
     if (typeof config === 'string') {
       try {
         configClone = JSON.parse(config);
-      }
-      catch (e) {
-        return 'JSON parsing failed. Build user config was invalid JSON.'
+      } catch (e) {
+        return 'JSON parsing failed. Build user config was invalid JSON.';
       }
     } else {
       configClone = config;
@@ -25,6 +24,4 @@ const Orchestration = {
 
 };
 
-module.exports = {
-  Orchestration
-};
+module.exports = { Orchestration };
