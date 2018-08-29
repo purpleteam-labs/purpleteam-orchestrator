@@ -1,7 +1,6 @@
 const convict = require('convict');
 const path = require('path');
 
-console.log(`Running in environment ${process.env.NODE_ENV}`); // eslint-disable-line
 const schema = {
   env: {
     doc: 'The application environment.',
@@ -108,7 +107,7 @@ const schema = {
 };
 
 const config = convict(schema);
-config.loadFile(path.join(__dirname, `config.${config.get('env')}.json`));
+config.loadFile(path.join(__dirname, `config.${process.env.NODE_ENV}.json`));
 config.validate();
 
 module.exports = config;
