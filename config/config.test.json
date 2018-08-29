@@ -1,0 +1,29 @@
+{
+  "logger": {
+    "level": "debug"  
+  },
+  "host": {
+    "ip": "127.0.0.1"
+  },
+  "redis": {
+    "clientCreationOptions": {
+      "port": 6379,
+      "host": "172.17.0.2"
+    }
+  },
+  "testers": {
+    "app": {
+      "url": "http://127.0.0.1:3000",
+      "active": true
+    },
+    "server": {
+      "url": "http://172.17.0.4:3010",
+      "active": false
+    },
+    "tls": {
+      "url": "http://172.17.0.5:3020",
+      "active": false
+    }
+  }
+}
+
