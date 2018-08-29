@@ -54,7 +54,7 @@ module.exports = [{
       // If we return JSON API data then it needs to meet the jsonapi spec (http://jsonapi.org/format/#content-negotiation-servers) and the media type (Content-Type) must be application/vnd.api+json
 
 
-    //    Provide feedback to the CLI on progress if requested
+      //    Provide feedback to the CLI on progress if requested
 
     // Once all testers have returned their results (by way of SSE):
     //    Coalate results / report(s) once all testers are done, generate report in build user specified formats and return them
