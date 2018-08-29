@@ -1,11 +1,12 @@
 const convict = require('convict');
 const path = require('path');
 
+console.log(`Running in environment ${process.env.NODE_ENV}`); // eslint-disable-line
 const schema = {
   env: {
     doc: 'The application environment.',
     format: ['production', 'development', 'test'],
-    default: 'development',
+    default: 'production',
     env: 'NOE_ENV'
   },
   logger: {
@@ -53,7 +54,7 @@ const schema = {
       url: {
         doc: 'The url of the  app-scanner microservice.',
         format: 'url',
-        default: null
+        default: 'https://127.0.0.1:1000'
       },
       active: {
         doc: 'Whether or not the app-scanner microservice is active.',
@@ -69,7 +70,7 @@ const schema = {
       url: {
         doc: 'The url of the  server-scanner microservice.',
         format: 'url',
-        default: null
+        default: 'https://127.0.0.1:1000'
       },
       active: {
         doc: 'Whether or not the server-scanner microservice is active.',
@@ -85,7 +86,7 @@ const schema = {
       url: {
         doc: 'The url of the  tls-checker microservice.',
         format: 'url',
-        default: null
+        default: 'https://127.0.0.1:1000'
       },
       active: {
         doc: 'Whether or not the tls-checker microservice is active.',
