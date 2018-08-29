@@ -67,7 +67,7 @@
     "eventsource": "^1.0.5",
     "hapi": "^17.5.4",
     "hapi-good-winston": "^2.0.1",
-    "joi": "^13.2.0",
+    "joi": "^13.6.0",
     "path": "^0.12.7",
     "purpleteam-logger": "^0.1.5",
     "redis": "^2.8.0",
@@ -81,7 +81,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.9.0",
     "lab": "^15.5.0",
-    "npm-check": "^5.5.2",
+    "npm-check": "^5.8.0",
     "pre-commit": "^1.2.2",
     "rewire": "^4.0.1",
     "sinon": "^6.1.5"
