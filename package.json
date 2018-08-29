@@ -7,7 +7,8 @@
     "lint": "eslint .",
     "deps": "npm-check",
     "update:deps": "npm-check -u",
-    "test": "echo \"Todo: Create tests.\" && exit 0",
+    "test": "lab --assert code",
+    "test:debug": "node --inspect-brk ./node_modules/.bin/lab --assert code --timeout 0",
     "pretest": "npm run lint",
     "debug": "node --inspect-brk ./index.js",
     "start": "node ./index.js"
@@ -17,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/binarymist/purpleteam-orchestrator.git"
+    "url": "git+https://gitlab.com/purpleteam-labs/purpleteam-orchestrator.git"
   },
   "keywords": [
     "security",
@@ -39,17 +40,21 @@
     "hapi-good-winston": "^2.0.1",
     "joi": "^13.2.0",
     "path": "^0.12.7",
-    "purpleteam-logger": "git+ssh://github.com/binarymist/purpleteam-logger.git",
+    "purpleteam-logger": "^0.1.3",
     "redis": "^2.8.0",
     "susie": "^3.0.0",
     "wreck": "^14.0.2"
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",
   "devDependencies": {
+    "code": "^5.2.0",
     "eslint": "^4.19.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
+    "lab": "^15.5.0",
     "npm-check": "^5.5.2",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "rewire": "^4.0.1",
+    "sinon": "^6.1.5"
   }
 }
