@@ -17,7 +17,7 @@ const subscribe = (redisChannel, callback) => {
 
 
 const init = (options) => {
-  log = options.log; // eslint-disable-line prefer-destructuring
+  ({ log } = options);
   redisOptions = options.redis;
 
   return { subscribe };

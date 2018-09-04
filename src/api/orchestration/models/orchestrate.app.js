@@ -1,4 +1,4 @@
-const log = require('purpleteam-logger').logger();
+const log = require('purpleteam-logger').get();
 const EventSource = require('eventsource');
 const Wreck = require('wreck');
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');

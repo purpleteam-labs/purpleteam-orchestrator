@@ -1,4 +1,4 @@
-// const log = require('purpleteam-logger').logger();
+// const log = require('purpleteam-logger').get();
 const Boom = require('boom'); // eslint-disable-line import/no-extraneous-dependencies
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
 const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserConfig');

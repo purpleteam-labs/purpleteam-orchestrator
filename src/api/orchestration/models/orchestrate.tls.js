@@ -1,4 +1,4 @@
-const log = require('purpleteam-logger').logger(); // eslint-disable-line no-unused-vars
+const log = require('purpleteam-logger').get(); // eslint-disable-line no-unused-vars
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
 
 
