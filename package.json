@@ -62,6 +62,7 @@
   "homepage": "https://gitlab.com/purpleteam-labs/purpleteam-orchestrator/blob/master/README.md",
   "dependencies": {
     "@gar/hapi-json-api": "git+https://github.com/binarymist/binarymist-hapi-jsonapi.git#upgradeToHapi17",
+    "ajv": "^6.5.3",
     "app-module-path": "^2.2.0",
     "convict": "^4.3.2",
     "eventsource": "^1.0.5",
