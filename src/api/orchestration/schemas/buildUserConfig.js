@@ -67,7 +67,7 @@ const schema = {
     },
     SutAuthentication: {
       type: 'object',
-      additionalProperties: true,
+      additionalProperties: false,
       properties: {
         route: { type: 'string' },
         usernameFieldLocater: { type: 'string' },
@@ -126,7 +126,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string' },
+        type: { enum: ['testSession', 'route'] },
         id: { type: 'string' },
         attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObject' },
         relationships: { $ref: '#/definitions/Relationships' }
@@ -136,7 +136,7 @@ const schema = {
         'id',
         'type'
       ],
-      title: 'Included'
+      title: 'TopLevelResourceObject'
     },
     AttributesObjOfTopLevelResourceObject: {
       type: 'object',
