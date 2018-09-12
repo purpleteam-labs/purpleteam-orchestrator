@@ -8,7 +8,7 @@ const internals = {
   validate: {
     failAction: async (request, respToolkit, err) => {
       debugger;
-      request.log(['error', 'post'], `An error occured while validating a build user's config. The following are the details:\nbuild user payload: ${BuildUserConfigMaskPassword(request.payload)}\nname: ${err.name}\nmessage. Errors: ${err.message}\noutput: ${JSON.stringify(err.output, null, 2)} `);
+      request.log(['error', 'post'], `An error occured while validating the buildUserConfig. The following are the details:\nunmodified buildUserPayload: ${BuildUserConfigMaskPassword(request.payload)}\nname: ${err.name}\nmessage. Errors: ${err.message}\noutput: ${JSON.stringify(err.output, null, 2)} `);
 
       // https://github.com/hapijs/boom#faq
       // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
