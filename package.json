@@ -66,6 +66,7 @@
     "ajv-errors": "^1.0.0",
     "app-module-path": "^2.2.0",
     "convict": "^4.3.2",
+    "diff": "^3.5.0",
     "eventsource": "^1.0.5",
     "hapi": "^17.5.4",
     "hapi-good-winston": "^2.0.1",
