@@ -86,9 +86,9 @@ const schema = {
       additionalProperties: false,
       properties: {
         route: { type: 'string', pattern: '^/\\w{1,200}$' },
-        usernameFieldLocater: { type: 'string' },
-        passwordFieldLocater: { type: 'string' },
-        submit: { type: 'string' },
+        usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
+        passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
+        submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' },
         expectedResponseSuccess: { type: 'string' },
         expectedResponseFail: { type: 'string' }
       },
@@ -215,7 +215,7 @@ const schema = {
       properties: {
         name: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' },
         value: { type: 'string' },
-        visible: { type: 'boolean' }
+        visible: { type: 'boolean' } // Todo: KC: Need to check whether visible should be required.
       },
       required: [
         'name',
