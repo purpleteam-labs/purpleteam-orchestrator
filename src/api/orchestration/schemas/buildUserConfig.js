@@ -131,7 +131,7 @@ const schema = {
       properties: {
         type: { type: 'string', enum: ['testSession', 'route'] },
         id: { type: 'string' },
-        attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObject' },
+        attributes: {},
         relationships: { $ref: '#/definitions/Relationships' }
       },
       required: [
@@ -141,10 +141,20 @@ const schema = {
       ],
       // If we want to use flags, etc, then need to use ajv-keywords: https://github.com/epoberezkin/ajv-keywords#regexp
       if: { properties: { type: { enum: ['testSession'] } } },
-      then: { properties: { id: { pattern: '^\\w{1,200}$' } } },
+      then: {
+        properties: {
+          id: { pattern: '^\\w{1,200}$' },
+          attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTestSession' }
+        }
+      },
       else: {
         if: { properties: { type: { enum: ['route'] } } },
-        then: { properties: { id: { pattern: '^/\\w{1,200}$' } } }
+        then: {
+          properties: {
+            id: { pattern: '^/\\w{1,200}$' },
+            attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
+          }
+        }
       },
       title: 'TopLevelResourceObject',
       errorMessage: {
@@ -154,30 +164,43 @@ const schema = {
         }
       }
     },
-    AttributesObjOfTopLevelResourceObject: {
+
+    AttributesObjOfTopLevelResourceObjectOfTypeTestSession: {
       type: 'object',
       additionalProperties: false,
       properties: {
-        username: { type: 'string' },
+        username: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' },
         password: { type: 'string' },
-        aScannerAttackStrength: { type: 'string' },
-        aScannerAlertThreshold: { type: 'string' },
-        alertThreshold: { type: 'integer' },
-        attackFields: {
-          type: 'array',
-          items: { $ref: '#/definitions/AttackField' }
-        },
-        method: { type: 'string' },
-        submit: { type: 'string' }
+        aScannerAttackStrength: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH', 'INSANE'] },
+        aScannerAlertThreshold: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH'] },
+        alertThreshold: { type: 'integer' }
       },
       required: [],
-      title: 'AttributesObjOfTopLevelResourceObject'
+      title: 'AttributesObjOfTopLevelResourceObjectOfTypeTestSession'
     },
+
+    AttributesObjOfTopLevelResourceObjectOfTypeRoute: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        attackFields: {
+          type: 'array',
+          items: { $ref: '#/definitions/AttackField' },
+          uniqueItems: true,
+          minItems: 0
+        },
+        method: { type: 'string', enum: ['GET', 'PUT', 'POST'] },
+        submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' }
+      },
+      required: ['attackFields', 'method', 'submit'],
+      title: 'AttributesObjOfTopLevelResourceObjectOfTypeRoute'
+    },
+
     AttackField: {
       type: 'object',
       additionalProperties: false,
       properties: {
-        name: { type: 'string' },
+        name: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' },
         value: { type: 'string' },
         visible: { type: 'boolean' }
       },
