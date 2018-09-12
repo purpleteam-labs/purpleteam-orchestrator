@@ -54,12 +54,18 @@ const schema = {
         sutAuthentication: { $ref: '#/definitions/SutAuthentication' },
         sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] }, // https://github.com/epoberezkin/ajv/issues/832
         sutPort: { type: 'integer', minimum: 1, maximum: 65535 },
-        sutProtocol: { type: 'string', enum: ['https', 'http'] },
+        sutProtocol: { type: 'string', enum: ['https', 'http'], default: 'https' },
         browser: { type: 'string', enum: configSchemaProps.sut.properties.browser.format, default: config.get('sut.browser') },
-        loggedInIndicator: { type: 'string' },
+        loggedInIndicator: { type: 'string', minLength: 1 },
         reportFormats: {
           type: 'array',
-          items: { type: 'string' }
+          items: {
+            type: 'string',
+            enum: ['html', 'json', 'md']
+          },
+          additionalItems: false,
+          uniqueItems: true,
+          minItems: 1
         }
       },
       required: [
@@ -72,7 +78,8 @@ const schema = {
         'sutProtocol',
         'version'
       ],
-      title: 'DataAttributes'
+      title: 'DataAttributes',
+      errorMessage: { properties: { loggedInIndicator: 'A loggedInIndicator is required by the App slave in order to know if a login was successful' } }
     },
     SutAuthentication: {
       type: 'object',
@@ -166,7 +173,7 @@ const schema = {
       errorMessage: {
         properties: {
           type: 'should be one of either testSession or route',
-          id: 'if type is testSession, the id should be a valid testSessio, if type is route, the id should be a valid route'
+          id: 'if type is testSession, the id should be a valid testSession, if type is route, the id should be a valid route'
         }
       }
     },
@@ -225,11 +232,8 @@ const validate = ajv.compile(schema);
 // eslint-disable-next-line consistent-return
 const buildUserConfigSchema = async (serialisedBuildUserConfig) => {
   const buildUserConfig = (typeof serialisedBuildUserConfig === 'string' || serialisedBuildUserConfig instanceof String) ? JSON.parse(serialisedBuildUserConfig) : serialisedBuildUserConfig;
-  if (!validate(buildUserConfig)) {
-    const validationError = new Error(JSON.stringify(validate.errors, null, 2));
-    validationError.name = 'ValidationError';
-    throw validationError;
-  }
+  const valid = validate(buildUserConfig);
+
   const mutatedSerialisedBuildUserConfig = JSON.stringify(buildUserConfig, null, 2);
   const diff = jsdiff.diffJson(JSON.parse(serialisedBuildUserConfig), JSON.parse(mutatedSerialisedBuildUserConfig));
   let mutated = false;
@@ -243,6 +247,12 @@ const buildUserConfigSchema = async (serialisedBuildUserConfig) => {
       log.notice(`Removed ->${part.value}}`, { tags: ['buildUserConfig'] });
     }
   });
+
+  if (!valid) {
+    const validationError = new Error(JSON.stringify(validate.errors, null, 2));
+    validationError.name = 'ValidationError';
+    throw validationError;
+  }
 
   if (mutated) return mutatedSerialisedBuildUserConfig;
 };
