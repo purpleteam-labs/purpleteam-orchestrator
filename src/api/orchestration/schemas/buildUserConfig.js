@@ -44,7 +44,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        version: { type: 'string' },
+        version: { type: 'string', pattern: '^([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+[0-9A-Za-z-]+)?$' },
         sutAuthentication: { $ref: '#/definitions/SutAuthentication' },
         sutIp: { type: 'string' },
         sutPort: { type: 'integer' },
