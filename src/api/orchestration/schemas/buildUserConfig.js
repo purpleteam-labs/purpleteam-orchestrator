@@ -29,7 +29,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string' },
+        type: { type: 'string', enum: ['testRun'] },
         attributes: { $ref: '#/definitions/DataAttributes' },
         relationships: { $ref: '#/definitions/Relationships' }
       },
