@@ -1,8 +1,14 @@
+const jsdiff = require('diff');
 const Ajv = require('ajv');
-const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv({ allErrors: true, useDefaults: true, removeAdditional: true });
 
 // Todo: KC: Make error messages more meaningful.
 require('ajv-errors')(ajv);
+
+const config = require('config/config');
+const configSchemaProps = config.getSchema().properties;
+
+const log = require('purpleteam-logger').init(config.get('logger'));
 
 
 const schema = {
@@ -49,7 +55,7 @@ const schema = {
         sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] }, // https://github.com/epoberezkin/ajv/issues/832
         sutPort: { type: 'integer', minimum: 1, maximum: 65535 },
         sutProtocol: { type: 'string', enum: ['https', 'http'] },
-        browser: { type: 'string' },
+        browser: { type: 'string', enum: configSchemaProps.sut.properties.browser.format, default: config.get('sut.browser') },
         loggedInIndicator: { type: 'string' },
         reportFormats: {
           type: 'array',
@@ -215,16 +221,30 @@ const schema = {
 
 const validate = ajv.compile(schema);
 
-
+// hapi route.options.validate.payload expects no return value if all good, but a value if mutation occured.
+// eslint-disable-next-line consistent-return
 const buildUserConfigSchema = async (serialisedBuildUserConfig) => {
-  debugger;
-  const buildUserConfig = (typeof serialisedBuildUserConfig === 'string' || serialisedBuildUserConfig instanceof String) ? JSON.parse(serialisedBuildUserConfig) : serialisedBuildUserConfig;  
-  const validBuildUserConfig = validate(buildUserConfig);
-  if (!validBuildUserConfig) {
+  const buildUserConfig = (typeof serialisedBuildUserConfig === 'string' || serialisedBuildUserConfig instanceof String) ? JSON.parse(serialisedBuildUserConfig) : serialisedBuildUserConfig;
+  if (!validate(buildUserConfig)) {
     const validationError = new Error(JSON.stringify(validate.errors, null, 2));
     validationError.name = 'ValidationError';
     throw validationError;
-  }  
+  }
+  const mutatedSerialisedBuildUserConfig = JSON.stringify(buildUserConfig, null, 2);
+  const diff = jsdiff.diffJson(JSON.parse(serialisedBuildUserConfig), JSON.parse(mutatedSerialisedBuildUserConfig));
+  let mutated = false;
+  diff.forEach((part) => {
+    if (part.added) {
+      mutated = true;
+      log.notice(`Added ->${part.value}}`, { tags: ['buildUserConfig'] });
+    }
+    if (part.removed) {
+      mutated = true;
+      log.notice(`Removed ->${part.value}}`, { tags: ['buildUserConfig'] });
+    }
+  });
+
+  if (mutated) return mutatedSerialisedBuildUserConfig;
 };
 
 

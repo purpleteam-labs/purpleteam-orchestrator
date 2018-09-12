@@ -25,7 +25,7 @@ class Orchestrate {
 
 
   async testTeamAction(testJob, action) {
-    this.log.notice(`The build user supplied payload to "${action}" with, was:\n${BuildUserConfigMaskPassword(testJob)}\n\n`, { tags: ['orchestrate'] });
+    this.log.notice(`The buildUserConfig used to "${action}" with, after validation and any modifications, was:\n${BuildUserConfigMaskPassword(testJob)}\n\n`, { tags: ['orchestrate'] });
 
     const combinedTestActionResult = testerModels.map(testerModel => testerModel[action](testJob, this.testersConfig[testerModel.name]));
 
