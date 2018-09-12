@@ -85,7 +85,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        route: { type: 'string' },
+        route: { type: 'string', pattern: '^/\\w{1,200}$' },
         usernameFieldLocater: { type: 'string' },
         passwordFieldLocater: { type: 'string' },
         submit: { type: 'string' },
