@@ -1,5 +1,8 @@
 const Ajv = require('ajv');
-const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
+const ajv = new Ajv({ allErrors: true });
+
+// Todo: KC: Make error messages more meaningful.
+require('ajv-errors')(ajv);
 
 
 const schema = {
@@ -126,7 +129,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { enum: ['testSession', 'route'] },
+        type: { type: 'string', enum: ['testSession', 'route'] },
         id: { type: 'string' },
         attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObject' },
         relationships: { $ref: '#/definitions/Relationships' }
@@ -136,7 +139,20 @@ const schema = {
         'id',
         'type'
       ],
-      title: 'TopLevelResourceObject'
+      // If we want to use flags, etc, then need to use ajv-keywords: https://github.com/epoberezkin/ajv-keywords#regexp
+      if: { properties: { type: { enum: ['testSession'] } } },
+      then: { properties: { id: { pattern: '^\\w{1,200}$' } } },
+      else: {
+        if: { properties: { type: { enum: ['route'] } } },
+        then: { properties: { id: { pattern: '^/\\w{1,200}$' } } }
+      },
+      title: 'TopLevelResourceObject',
+      errorMessage: {
+        properties: {
+          type: 'should be one of either testSession or route',
+          id: 'if type is testSession, the id should be a valid testSessio, if type is route, the id should be a valid route'
+        }
+      }
     },
     AttributesObjOfTopLevelResourceObject: {
       type: 'object',
