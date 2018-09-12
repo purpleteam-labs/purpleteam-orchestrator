@@ -46,9 +46,9 @@ const schema = {
       properties: {
         version: { type: 'string', pattern: '^([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+[0-9A-Za-z-]+)?$' },
         sutAuthentication: { $ref: '#/definitions/SutAuthentication' },
-        sutIp: { type: 'string' },
-        sutPort: { type: 'integer' },
-        sutProtocol: { type: 'string' },
+        sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] }, // https://github.com/epoberezkin/ajv/issues/832
+        sutPort: { type: 'integer', minimum: 1, maximum: 65535 },
+        sutProtocol: { type: 'string', enum: ['https', 'http'] },
         browser: { type: 'string' },
         loggedInIndicator: { type: 'string' },
         reportFormats: {
