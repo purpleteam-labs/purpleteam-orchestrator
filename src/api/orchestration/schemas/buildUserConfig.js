@@ -104,7 +104,7 @@ const schema = {
       properties: {
         data: {
           type: 'array',
-          items: { $ref: '#/definitions/Datum' }
+          items: { $ref: '#/definitions/ResourceLinkage' }
         }
       },
       required: [
@@ -112,7 +112,7 @@ const schema = {
       ],
       title: 'Relationships'
     },
-    Datum: {
+    ResourceLinkage: {
       type: 'object',
       additionalProperties: false,
       properties: {
@@ -123,7 +123,7 @@ const schema = {
         'id',
         'type'
       ],
-      title: 'Datum'
+      title: 'ResourceLinkage'
     },
     TopLevelResourceObject: {
       type: 'object',
