@@ -50,7 +50,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        version: { type: 'string', pattern: '^([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)\\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+[0-9A-Za-z-]+)?$' },
+        version: { type: 'string', const: config.get('buildUserConfig.version') },
         sutAuthentication: { $ref: '#/definitions/SutAuthentication' },
         sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] }, // https://github.com/epoberezkin/ajv/issues/832
         sutPort: { type: 'integer', minimum: 1, maximum: 65535 },
@@ -61,7 +61,7 @@ const schema = {
           type: 'array',
           items: {
             type: 'string',
-            enum: ['html', 'json', 'md'] // Use from config
+            enum: configSchemaProps.sut.properties.reportFormat.format // Use from config
           },
           additionalItems: false,
           uniqueItems: true,
