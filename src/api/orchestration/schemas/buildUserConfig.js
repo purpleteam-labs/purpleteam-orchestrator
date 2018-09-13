@@ -61,7 +61,7 @@ const schema = {
           type: 'array',
           items: {
             type: 'string',
-            enum: configSchemaProps.sut.properties.reportFormat.format // Use from config
+            enum: configSchemaProps.sut.properties.reportFormat.format
           },
           additionalItems: false,
           uniqueItems: true,
@@ -129,13 +129,16 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string' }, // Validate.........if testSession, id should look like.... if route, id should look like
+        type: { type: 'string', enum: ['testSession', 'route'] },
         id: { type: 'string' }
       },
-      required: [
-        'id',
-        'type'
-      ],
+      required: ['id', 'type'],
+      if: { properties: { type: { enum: ['testSession'] } } },
+      then: { properties: { id: { pattern: '^\\w{1,200}$' } } },
+      else: {
+        if: { properties: { type: { enum: ['route'] } } },
+        then: { properties: { id: { pattern: '^/\\w{1,200}$' } } }
+      },
       title: 'ResourceLinkage'
     },
     TopLevelResourceObject: {
@@ -152,7 +155,7 @@ const schema = {
         'id',
         'type'
       ],
-      // If we want to use flags, etc, then need to use ajv-keywords: https://github.com/epoberezkin/ajv-keywords#regexp
+      // If we want to use flags for regex, etc, then need to use ajv-keywords: https://github.com/epoberezkin/ajv-keywords#regexp
       if: { properties: { type: { enum: ['testSession'] } } },
       then: {
         properties: {
@@ -166,7 +169,6 @@ const schema = {
         if: { properties: { type: { enum: ['route'] } } },
         then: {
           properties: {
-            type: {},
             id: { pattern: '^/\\w{1,200}$' },
             attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
           }
