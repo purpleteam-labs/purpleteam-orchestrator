@@ -61,7 +61,7 @@ const schema = {
           type: 'array',
           items: {
             type: 'string',
-            enum: ['html', 'json', 'md']
+            enum: ['html', 'json', 'md'] // Use from config
           },
           additionalItems: false,
           uniqueItems: true,
@@ -129,7 +129,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string' },
+        type: { type: 'string' }, // Validate.........if testSession, id should look like.... if route, id should look like
         id: { type: 'string' }
       },
       required: [
@@ -145,7 +145,7 @@ const schema = {
         type: { type: 'string', enum: ['testSession', 'route'] },
         id: { type: 'string' },
         attributes: {},
-        relationships: { $ref: '#/definitions/Relationships' }
+        relationships: {}
       },
       required: [
         'attributes',
@@ -157,13 +157,16 @@ const schema = {
       then: {
         properties: {
           id: { pattern: '^\\w{1,200}$' },
-          attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTestSession' }
-        }
+          attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTestSession' },
+          relationships: { $ref: '#/definitions/Relationships' }
+        },
+        required: ['relationships']
       },
       else: {
         if: { properties: { type: { enum: ['route'] } } },
         then: {
           properties: {
+            type: {},
             id: { pattern: '^/\\w{1,200}$' },
             attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
           }
