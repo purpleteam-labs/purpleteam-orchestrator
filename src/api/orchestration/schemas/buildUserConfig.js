@@ -1,16 +1,18 @@
 const jsdiff = require('diff');
 const Ajv = require('ajv');
+
 const ajv = new Ajv({ allErrors: true, useDefaults: true, removeAdditional: true });
 
 // Todo: KC: Make error messages more meaningful.
 require('ajv-errors')(ajv);
 
 const config = require('config/config');
+
 const configSchemaProps = config.getSchema().properties;
 
 const log = require('purpleteam-logger').init(config.get('logger'));
 
-
+// Used quicktype to generate initial schema from buildUserConfig
 const schema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   $ref: '#/definitions/BuildUserConfig',
@@ -89,8 +91,8 @@ const schema = {
         usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
         passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
         submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' },
-        expectedResponseSuccess: { type: 'string' },
-        expectedResponseFail: { type: 'string' }
+        expectedResponseSuccess: { type: 'string', minLength: 2, maxLength: 200 },
+        expectedResponseFail: { type: 'string', minLength: 2, maxLength: 200 }
       },
       oneOf: [
         {
