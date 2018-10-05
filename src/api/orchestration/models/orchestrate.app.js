@@ -1,13 +1,25 @@
 const log = require('purpleteam-logger').get();
-const EventSource = require('eventsource');
 const Wreck = require('wreck');
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
 
+const internals = {
+  testerConfig: null,
+  testSessions: []
+};
 
-async function plan(testJob, testerConfig) {
-  const { name, url, active, testPlanRoute } = testerConfig;
 
-  if (!active) return TestPlanUnavailable(name);
+const init = (testerConfig) => {
+  if (!internals.testerConfig) internals.testerConfig = testerConfig;
+};
+
+
+const isActive = () => internals.testerConfig.active;
+
+
+async function plan(testJob) {
+  const { testerConfig: { name, url, testPlanRoute } } = internals;
+
+  if (!isActive()) return TestPlanUnavailable(name);
 
   const promisedResponse = Wreck.post(`${url}${testPlanRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob });
   try {
@@ -30,35 +42,40 @@ async function plan(testJob, testerConfig) {
 }
 
 
-function subscribeToTesterProgress(testerName, url, testResultRoute) {
-  // Todo: should probably be awaited.
+async function attack(testJob) {
+  const { testerConfig: { name, url, runJobRoute } } = internals;
 
-  const eventSource = new EventSource(`${url}${testResultRoute}`);
-  eventSource.addEventListener(`${testerName}TestingResult`, (event) => {
-    // const dataFormat = Object.prototype.hasOwnProperty.call(event, 'dataFormat') ? event.dataFormat : null;
-    // console.log(dataFormat === 'json' ? JSON.parse(event.data) : event.data);
-    log.notice(JSON.parse(event.data).testingResult, { tags: ['orchestrate.app'] });
-  });
-}
+  if (!isActive()) return { name, message: TesterUnavailable(name) };
 
-
-async function attack(testJob, testerConfig) {
-  const { name, url, active, runJobRoute, testResultRoute } = testerConfig;
-
-  if (!active) return { name, message: TesterUnavailable(name) };
-
+  const hydratedTestJob = JSON.parse(testJob);
+  internals.testSessions = hydratedTestJob.included.filter(resourceObj => resourceObj.type === 'testSession').map(testSessionResourceObj => ({ id: testSessionResourceObj.id, isFinished: false }));
 
   const { res, payload } = await Wreck.post(`${url}${runJobRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob }); // eslint-disable-line no-unused-vars
   const runJobPayload = payload.toString();
   log.notice(runJobPayload, { tags: ['orchestrate.app'] });
 
-  if (!runJobPayload.startsWith('Request ignored')) subscribeToTesterProgress(name, url, testResultRoute);
-
   return { name, message: runJobPayload };
 }
 
 
+const setTestSessionFinished = (testSessionId) => {
+  const { testSessions } = internals;
+
+  if (!testSessionId) throw new Error('There was no testSessionId supplied to the testSessions method of the app model');
+  if (typeof testSessionId !== 'string') throw new Error('"testSessionId" must be a string');
+
+  testSessions.find(tS => tS.id === testSessionId).isFinished = true;
+};
+
+
+const areAllTestSessionsFinished = () => internals.testSessions.every(tS => tS.isFinished);
+
+
 module.exports = {
+  init,
+  isActive,
   plan,
-  attack
+  attack,
+  setTestSessionFinished,
+  areAllTestSessionsFinished
 };

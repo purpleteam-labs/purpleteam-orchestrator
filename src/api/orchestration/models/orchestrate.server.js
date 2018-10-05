@@ -2,20 +2,51 @@ const log = require('purpleteam-logger').get(); // eslint-disable-line no-unused
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
 
 
-async function plan(testJob, testerConfig) { // eslint-disable-line consistent-return
-  const { name, url, active, testPlanRoute } = testerConfig; // eslint-disable-line no-unused-vars
+const internals = {
+  testerConfig: null,
+  testSessions: []
+};
 
-  if (!active) return { name, message: TestPlanUnavailable(name) };
+
+const init = (testerConfig) => {
+  if (!internals.testerConfig) internals.testerConfig = testerConfig;
+};
+
+
+const isActive = () => internals.testerConfig.active;
+
+
+async function plan(testJob) { // eslint-disable-line no-unused-vars
+  const { testerConfig: { name, url, testPlanRoute } } = internals; // eslint-disable-line no-unused-vars
+
+  if (!isActive()) return { name, message: TestPlanUnavailable(name) };
+
+  throw new Error('Not implemented!');
 }
 
 
-async function attack(testJob, testerConfig) { // eslint-disable-line consistent-return
-  const { name, url, active, runJobRoute, testResultRoute } = testerConfig; // eslint-disable-line no-unused-vars
+async function attack(testJob) { // eslint-disable-line no-unused-vars
+  const { testerConfig: { name, url, runJobRoute, testResultRoute } } = internals; // eslint-disable-line no-unused-vars
 
-  if (!active) return { name, message: TesterUnavailable(name) };
+  if (!isActive()) return { name, message: TesterUnavailable(name) };
+
+  throw new Error('Not implemented!');
 }
+
+
+const setTestSessionFinished = (testSessionId) => { // eslint-disable-line no-unused-vars
+  throw new Error('Not implemented!');
+};
+
+
+const areAllTestSessionsFinished = () => { throw new Error('Not implemented!'); };
+
 
 module.exports = {
+  init,
+  isActive,
   plan,
-  attack
+  attack,
+  setTestSessionFinished,
+  areAllTestSessionsFinished
 };
