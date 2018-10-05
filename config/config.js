@@ -61,8 +61,7 @@ const schema = {
         default: true
       },
       testPlanRoute: '/test-plan',
-      runJobRoute: '/run-job',
-      testResultRoute: '/test-results'
+      runJobRoute: '/run-job'
     },
     server: {
       name: 'server',
@@ -77,8 +76,7 @@ const schema = {
         default: true
       },
       testPlanRoute: '/test-plan',
-      runJobRoute: '/run-job',
-      testResultRoute: '/test-results'
+      runJobRoute: '/run-job'
     },
     tls: {
       name: 'tls',
@@ -93,8 +91,7 @@ const schema = {
         default: true
       },
       testPlanRoute: '/test-plan',
-      runJobRoute: '/run-job',
-      testResultRoute: '/test-results'
+      runJobRoute: '/run-job'
     }
   },
   buildUserConfig: {
