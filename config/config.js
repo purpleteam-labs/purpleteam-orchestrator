@@ -100,6 +100,13 @@ const schema = {
       format: ['0.1.0-alpha.1'],
       default: '0.1.0-alpha.1'
     }
+  },
+  outcomes: {
+    dir: {
+      doc: 'The directory that stores Tester results and Slave reports.',
+      format: String,
+      default: '/var/log/purpleteam/outcomes/'
+    }
   }
 };
 
