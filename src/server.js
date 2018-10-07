@@ -47,7 +47,8 @@ const domainPlugins = [
     options: {
       log,
       testers: config.get('testers'),
-      testerWatcher
+      testerWatcher,
+      outcomesDir: config.get('outcomes.dir')
     }
   }
 ];
