@@ -4,6 +4,7 @@ const { promisify } = require('util');
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
 
 let testerModels;
+let outcomesDirectory;
 
 (async () => {
   const promiseToReadDir = promisify(fs.readdir);
@@ -43,13 +44,37 @@ const testerWatcherCallback = (chan, message, respToolkit, models) => {
   respToolkit.event({ id: update.timestamp, event: update.event, data: customMessageForCli ? { progress: customMessageForCli } : update.data });
 };
 
+
+const clearOutcomesDir = async () => {
+  const promiseToReadDir = promisify(fs.readdir);
+  const promiseToUnlink = promisify(fs.unlink);
+
+  try {
+    const fileNames = await promiseToReadDir(outcomesDirectory);
+    if (fileNames.length) {
+      const unlinkPromises = fileNames.map(async name => promiseToUnlink(`${outcomesDirectory}${name}`));
+      return await Promise.all(unlinkPromises);
+    }
+  } catch (e) {
+    return e;
+  }
+  return undefined;
+};
+
+
+const archiveOutcomeFiles = () => {
+
+};
+
+
 class Orchestrate {
   constructor(options) {
-    const { log, testers, testerWatcher } = options;
+    const { log, testers, testerWatcher, outcomesDir } = options;
 
     this.log = log;
     this.testersConfig = testers;
     this.testerWatcher = testerWatcher;
+    outcomesDirectory = outcomesDir;
   }
 
 
@@ -69,6 +94,11 @@ class Orchestrate {
 
 
   async testTeamAttack(testJob) {
+    const error = await clearOutcomesDir();
+    if (error) {
+      this.log.error(`Clearing the outcomes directory failed. The error was: ${error}`, { tags: ['orchestrate'] });
+      throw error;
+    }
     return this.testTeamAction(testJob, 'attack');
   }
 
