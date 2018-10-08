@@ -235,7 +235,7 @@ const schema = {
 
 const validate = ajv.compile(schema);
 
-// hapi route.options.validate.payload expects no return value if all good, but a value if mutation occured.
+// hapi route.options.validate.payload expects no return value if all good, but a value if mutation occurred.
 // eslint-disable-next-line consistent-return
 const buildUserConfigSchema = async (serialisedBuildUserConfig) => {
   const buildUserConfig = (typeof serialisedBuildUserConfig === 'string' || serialisedBuildUserConfig instanceof String) ? JSON.parse(serialisedBuildUserConfig) : serialisedBuildUserConfig;
