@@ -7,7 +7,7 @@ const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserCo
 const internals = {
   validate: {
     failAction: async (request, respToolkit, err) => {
-      request.log(['error', 'post'], `An error occured while validating the buildUserConfig. The following are the details:\nunmodified buildUserPayload: ${BuildUserConfigMaskPassword(request.payload)}\nname: ${err.name}\nmessage. Errors: ${err.message}\noutput: ${JSON.stringify(err.output, null, 2)} `);
+      request.log(['error', 'post'], `An error occurred while validating the buildUserConfig. The following are the details:\nunmodified buildUserPayload: ${BuildUserConfigMaskPassword(request.payload)}\nname: ${err.name}\nmessage. Errors: ${err.message}\noutput: ${JSON.stringify(err.output, null, 2)} `);
 
       // https://github.com/hapijs/boom#faq
       // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
