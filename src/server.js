@@ -2,6 +2,7 @@ const Hapi = require('hapi');
 const hapiJsonApi = require('@gar/hapi-json-api');
 const sussie = require('susie');
 const good = require('good'); // eslint-disable-line import/no-extraneous-dependencies
+const Inert = require('inert');
 const config = require('config/config');
 const orchestration = require('src/api/orchestration');
 
@@ -39,7 +40,8 @@ const infrastructuralPlugins = [
   {
     plugin: good,
     options: { reporters: reporters[process.env.NODE_ENV] }
-  }
+  },
+  Inert
 ];
 const domainPlugins = [
   {
@@ -48,7 +50,7 @@ const domainPlugins = [
       log,
       testers: config.get('testers'),
       testerWatcher,
-      outcomesDir: config.get('outcomes.dir')
+      outcomes: config.get('outcomes')
     }
   }
 ];

@@ -1,10 +1,12 @@
+const { exec } = require('child_process');
 const fs = require('fs');
 const { promisify } = require('util');
 
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
 
 let testerModels;
-let outcomesDirectory;
+let outcomesConfig;
+let log;
 
 (async () => {
   const promiseToReadDir = promisify(fs.readdir);
@@ -13,6 +15,21 @@ let outcomesDirectory;
   const subModelFileNames = modelFileNames.filter(fileName => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11))); // eslint-disable-line no-confusing-arrow
   testerModels = subModelFileNames.map(fileName => ({ ...require(`./${fileName}`), name: fileName.split('.')[modelNameParts.testerType] })); // eslint-disable-line
 })();
+
+
+const archiveOutcomes = () => {
+  // For a lib based and richer solution: https://github.com/archiverjs/node-archiver
+  const { compressionLvl, fileName, dir } = outcomesConfig;
+  exec(`zip ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
+    if (error) {
+      log.error(`Error occurred archiving the outcomes: ${error}`, { tags: ['orchestrate'] });
+      return;
+    }
+
+    !!stdout && log.notice(`Archiving the outcomes, stdout:\n${stdout}`, { tags: ['orchestrate'] });
+    !!stderr && log.notice(`Archiving the outcomes, stderr:\n${stderr}`, { tags: ['orchestrate'] });
+  });
+};
 
 
 const areAllTestSessionsOfAllTestersFinished = (chan, models) => {
@@ -30,7 +47,7 @@ const areAllTestSessionsOfAllTestersFinished = (chan, models) => {
 
 const checkForCustomMessageForCli = (update, chan, models) => {
   let message;
-  if (update.event === 'testerProgress' && update.data.progress.startsWith('Tester finished.')) {
+  if (update.event === 'testerProgress' && update.data.progress.startsWith('Tester finished:')) {
     message = areAllTestSessionsOfAllTestersFinished(chan, models) ? 'All test sessions of all testers are finished' : undefined;
   }
   return message;
@@ -41,19 +58,27 @@ const testerWatcherCallback = (chan, message, respToolkit, models) => {
   const response = respToolkit.response(message);
   const update = JSON.parse(response.source);
   const customMessageForCli = checkForCustomMessageForCli(update, chan, models);
-  respToolkit.event({ id: update.timestamp, event: update.event, data: customMessageForCli ? { progress: customMessageForCli } : update.data });
+  let sseData;
+  if (customMessageForCli) {
+    sseData = { progress: customMessageForCli };
+    customMessageForCli === 'All test sessions of all testers are finished' && archiveOutcomes();
+  } else {
+    sseData = update.data;
+  }
+  respToolkit.event({ id: update.timestamp, event: update.event, data: sseData });
 };
 
 
 const clearOutcomesDir = async () => {
   const promiseToReadDir = promisify(fs.readdir);
   const promiseToUnlink = promisify(fs.unlink);
+  const { dir } = outcomesConfig;
 
   try {
-    const fileNames = await promiseToReadDir(outcomesDirectory);
+    const fileNames = await promiseToReadDir(dir);
     if (fileNames.length) {
-      const unlinkPromises = fileNames.map(async name => promiseToUnlink(`${outcomesDirectory}${name}`));
-      return await Promise.all(unlinkPromises);
+      const unlinkPromises = fileNames.map(async name => promiseToUnlink(`${dir}${name}`));
+      await Promise.all(unlinkPromises);
     }
   } catch (e) {
     return e;
@@ -62,19 +87,21 @@ const clearOutcomesDir = async () => {
 };
 
 
-const archiveOutcomeFiles = () => {
-
-};
-
-
 class Orchestrate {
   constructor(options) {
-    const { log, testers, testerWatcher, outcomesDir } = options;
+    const { log: logger, testers, testerWatcher, outcomes } = options;
 
-    this.log = log;
+    this.log = logger;
     this.testersConfig = testers;
     this.testerWatcher = testerWatcher;
-    outcomesDirectory = outcomesDir;
+    log = logger;
+    outcomesConfig = outcomes;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getOutcomesArchiveFilePath() {
+    const { dir, fileName } = outcomesConfig;
+    return `${dir}${fileName}`;
   }
 
 

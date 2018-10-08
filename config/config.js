@@ -106,6 +106,16 @@ const schema = {
       doc: 'The directory that stores Tester results and Slave reports.',
       format: String,
       default: '/var/log/purpleteam/outcomes/'
+    },
+    fileName: {
+      doc: 'The name of the archive file containing all of the Tester outcomes (results, reports)',
+      format: String,
+      default: 'outcomes.zip'
+    },
+    compressionLvl: {
+      doc: 'The compression level of the outcomes archive file',
+      format: ['-0', '-1', '-2', '-3', '-4', '-5', '-6', '-7', '-8', '-9'],
+      default: '-6'
     }
   }
 };

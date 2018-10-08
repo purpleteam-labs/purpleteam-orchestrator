@@ -69,6 +69,7 @@
     "diff": "^3.5.0",
     "hapi": "^17.5.4",
     "hapi-good-winston": "^2.0.1",
+    "inert": "^5.1.0",
     "joi": "^13.6.0",
     "path": "^0.12.7",
     "purpleteam-logger": "^1.0.0",

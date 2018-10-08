@@ -23,6 +23,13 @@ module.exports = [{
       return response;
     }
   }
-
-
+}, {
+  method: 'GET',
+  path: '/outcomes',
+  options: {
+    handler: (request, respToolkit) => {
+      const { model: { getOutcomesArchiveFilePath } } = request.server.app;
+      return respToolkit.file(getOutcomesArchiveFilePath(), { confine: false });
+    }
+  }
 }];
