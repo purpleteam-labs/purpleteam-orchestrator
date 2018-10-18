@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  orchestrator:
+    build: .
+    ports:
+      - "2000:2000"
+    # Use type host until we can test link
+    network_mode: "host"
+    environment:
+      - NODE_ENV=development
+    # Following values are analogous to their Dockerfile counterparts:
+    # -i : Keep STDIN open even if not attached
+    # -t : Allocate a pseudo-tty
+    stdin_open: true
+    tty: true
+    container_name: pt-orchestrator-cont
+    volumes:
+      - type: bind
+        source: /mnt/Storage4TB/Logs/purpleteam/outcomes
+        target: /mnt/Storage4TB/Logs/purpleteam/outcomes
+
