@@ -11,7 +11,10 @@
     "test:debug": "node --inspect-brk ./node_modules/.bin/lab --assert code --timeout 0",
     "pretest": "npm run lint",
     "debug": "node --inspect-brk ./index.js",
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "dc": "LOCAL_GROUP_ID=$(id -g) LOCAL_USER_ID=$(id -u) docker-compose",
+    "dc-build": "npm run dc build",
+    "dc-up": "npm run dc up"
   },
   "pre-commit": [
     "test"

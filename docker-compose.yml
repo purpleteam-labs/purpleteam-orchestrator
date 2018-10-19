@@ -2,11 +2,16 @@ version: "3.7"
 
 services:
   orchestrator:
-    build: .
     ports:
       - "2000:2000"
     # Use type host until we can test link
     network_mode: "host"
+    build:
+      context: .
+      # Build-time args
+      args:
+        LOCAL_USER_ID: ${LOCAL_USER_ID}
+        LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
     environment:
       - NODE_ENV=development
     # Following values are analogous to their Dockerfile counterparts:
