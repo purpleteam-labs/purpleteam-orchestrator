@@ -13,6 +13,7 @@ ENV user orchestrator
 ENV group purpleteam
 RUN echo user is: ${user}, LOCAL_USER_ID is: ${LOCAL_USER_ID}, group is: ${group}, LOCAL_GROUP_ID is: ${LOCAL_GROUP_ID}
 RUN apk add --no-cache zip
+# Following taken from: https://github.com/mhart/alpine-node/issues/48#issuecomment-430902787
 RUN apk add --no-cache shadow sudo && \
     if [ -z "`getent group $LOCAL_GROUP_ID`" ]; then \
       addgroup -S -g $LOCAL_GROUP_ID $group; \
