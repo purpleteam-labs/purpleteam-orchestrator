@@ -22,6 +22,6 @@ services:
     container_name: pt-orchestrator-cont
     volumes:
       - type: bind
-        source: /mnt/Storage4TB/Logs/purpleteam/outcomes
-        target: /mnt/Storage4TB/Logs/purpleteam/outcomes
+        source: ${HOST_DIR}
+        target: ${CONT_DIR}
 
