@@ -3,10 +3,6 @@ FROM node:10-alpine
 ARG LOCAL_USER_ID
 ARG LOCAL_GROUP_ID
 
-
-
-
-
 # Create an environment variable in our image for the non-root user we want to use.
 # ENV user 1000
 ENV user orchestrator
@@ -14,7 +10,7 @@ ENV group purpleteam
 RUN echo user is: ${user}, LOCAL_USER_ID is: ${LOCAL_USER_ID}, group is: ${group}, LOCAL_GROUP_ID is: ${LOCAL_GROUP_ID}
 RUN apk add --no-cache zip
 # Following taken from: https://github.com/mhart/alpine-node/issues/48#issuecomment-430902787
-RUN apk add --no-cache shadow sudo && \
+RUN apk add --no-cache shadow && \
     if [ -z "`getent group $LOCAL_GROUP_ID`" ]; then \
       addgroup -S -g $LOCAL_GROUP_ID $group; \
     else \
@@ -24,10 +20,12 @@ RUN apk add --no-cache shadow sudo && \
       adduser -S -u $LOCAL_USER_ID -G $group -s /bin/sh $user; \
     else \
       usermod -l $user -g $LOCAL_GROUP_ID -d /home/$user -m `getent passwd $LOCAL_USER_ID | cut -d: -f1`; \
-    fi && \
-    echo "$user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$user && \
-    chmod 0440 /etc/sudoers.d/$user
-RUN cat /etc/sudoers.d/$user
+    fi
+
+# Useful for running commands as root in development
+# RUN apk add --no-cache sudo && \
+#     echo "$user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$user && \
+#     chmod 0440 /etc/sudoers.d/$user
 
 ENV workdir /usr/src/app/
 
@@ -67,9 +65,7 @@ RUN cd $workdir; npm install
 #RUN apk del .gyp python make g++
 #USER $user
 
-
 COPY . $workdir
-
 
 # Here I used to chown and chmod as shown here: http://f1.holisticinfosecforwebdevelopers.com/chap03.html#vps-countermeasures-docker-the-default-user-is-root
 # Problem is, each of these commands creates another layer of all the files modified and thus adds over 100MB to the image: https://www.datawire.io/not-engineer-running-3-5gb-docker-images/
