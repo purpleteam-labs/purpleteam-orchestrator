@@ -12,9 +12,12 @@
     "pretest": "npm run lint",
     "debug": "node --inspect-brk ./index.js",
     "start": "node ./index.js",
-    "dc": "LOCAL_GROUP_ID=$(id -g) LOCAL_USER_ID=$(id -u) docker-compose",
-    "dc-build": "npm run dc build",
-    "dc-up": "npm run dc up"
+    "dc-orchestrator": "LOCAL_GROUP_ID=$(id -g) LOCAL_USER_ID=$(id -u) docker-compose -f ./compose/docker-compose-bridge-net.yml",
+    "dc-orchestrator-testers": "LOCAL_GROUP_ID=$(id -g) LOCAL_USER_ID=$(id -u) docker-compose -f ./compose/docker-compose-orchestrator-testers.yml",    
+    "dc-build-orchestrator": "npm run dc-orchestrator build",
+    "dc-up-orchestrator": "npm run dc-orchestrator up",
+    "dc-build": "npm run dc-orchestrator-testers build",
+    "dc-up": "npm run dc-orchestrator-testers up"
   },
   "pre-commit": [
     "test"

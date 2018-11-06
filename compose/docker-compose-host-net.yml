@@ -7,7 +7,7 @@ services:
     # Use type host until we can test link
     network_mode: "host"
     build:
-      context: .
+      context: ../
       # Build-time args
       args:
         LOCAL_USER_ID: ${LOCAL_USER_ID}
