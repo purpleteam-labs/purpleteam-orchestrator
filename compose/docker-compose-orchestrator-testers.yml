@@ -7,16 +7,24 @@ networks:
        - subnet: 172.25.0.0/24
 
 services:
-  orchestrator:
-    ports:
-      - "2000:2000"
-    # Use type host until we can test link
+  redis:
+    image: redis:alpine
     networks:
       pt-net:
-        ipv4_address: 172.25.0.10
+    ports:
+     - "6379:6379"
+
+  app-scanner:
+    depends_on:
+     - redis
+    networks:
+      pt-net:
+        ipv4_address: 172.25.0.20
+    ports:
+     - "3000:3000"
     build:
-      context: ../
-      # Build-time args
+      context: ../../purpleteam-app-scanner/
+        # Build-time args
       args:
         LOCAL_USER_ID: ${LOCAL_USER_ID}
         LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
@@ -27,9 +35,37 @@ services:
     # -t : Allocate a pseudo-tty
     stdin_open: true
     tty: true
+    container_name: pt-app-scanner-cont
+    volumes:
+     - type: bind
+       source: ${HOST_DIR}
+       target: ${CONT_DIR}
+
+  orchestrator:
+    depends_on:
+     - redis
+    # Use type host until we can test link
+    networks:
+      pt-net:
+        ipv4_address: 172.25.0.10
+    ports:
+     - "2000:2000"
+    build:
+      context: ../
+      # Build-time args
+      args:
+        LOCAL_USER_ID: ${LOCAL_USER_ID}
+        LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
+    environment:
+     - NODE_ENV=development
+    # Following values are analogous to their Dockerfile counterparts:
+    # -i : Keep STDIN open even if not attached
+    # -t : Allocate a pseudo-tty
+    stdin_open: true
+    tty: true
     container_name: pt-orchestrator-cont
     volumes:
-      - type: bind
-        source: ${HOST_DIR}
-        target: ${CONT_DIR}
+     - type: bind
+       source: ${HOST_DIR}
+       target: ${CONT_DIR}
 
