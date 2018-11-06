@@ -17,7 +17,8 @@
     "dc-build-orchestrator": "npm run dc-orchestrator build",
     "dc-up-orchestrator": "npm run dc-orchestrator up",
     "dc-build": "npm run dc-orchestrator-testers build",
-    "dc-up": "npm run dc-orchestrator-testers up"
+    "dc-up": "npm run dc-orchestrator-testers up",
+    "dc-down": "npm run dc-orchestrator-testers down"
   },
   "pre-commit": [
     "test"
