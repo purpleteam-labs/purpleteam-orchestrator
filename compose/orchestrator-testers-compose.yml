@@ -22,11 +22,6 @@ services:
         ipv4_address: 172.25.0.120
     ports:
      - "3000:3000"
-    # - "9229:9229"
-    #command:
-    # - node
-    # - "--inspect-brk=0.0.0.0"
-    # - "./index.js"
     build:
       context: ../../purpleteam-app-scanner/
         # Build-time args
