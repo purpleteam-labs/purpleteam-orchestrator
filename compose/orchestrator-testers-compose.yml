@@ -19,9 +19,14 @@ services:
      - redis
     networks:
       pt-net:
-        ipv4_address: 172.25.0.20
+        ipv4_address: 172.25.0.120
     ports:
      - "3000:3000"
+    # - "9229:9229"
+    #command:
+    # - node
+    # - "--inspect-brk=0.0.0.0"
+    # - "./index.js"
     build:
       context: ../../purpleteam-app-scanner/
         # Build-time args
@@ -30,6 +35,8 @@ services:
         LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
     environment:
       - NODE_ENV=development
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     # Following values are analogous to their Dockerfile counterparts:
     # -i : Keep STDIN open even if not attached
     # -t : Allocate a pseudo-tty
@@ -47,7 +54,7 @@ services:
     # Use type host until we can test link
     networks:
       pt-net:
-        ipv4_address: 172.25.0.10
+        ipv4_address: 172.25.0.110
     ports:
      - "2000:2000"
     build:
