@@ -1,0 +1,14 @@
+# https://docs.docker.com/compose/extends/
+
+version: "3.7"
+
+services:
+
+  orchestrator:
+    ports:
+     - "9229:9229"
+    command:
+     - node
+     - "--inspect-brk=0.0.0.0"
+     - "./index.js"
+

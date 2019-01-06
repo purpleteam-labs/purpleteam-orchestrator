@@ -18,9 +18,14 @@
     "dc-orchestrator-testers": "LOCAL_GROUP_ID=$(id -g) LOCAL_USER_ID=$(id -u) AWS_ACCESS_KEY_ID=$(aws --profile default configure get aws_access_key_id) AWS_SECRET_ACCESS_KEY=$(aws --profile default configure get aws_secret_access_key) docker-compose -f ./compose/orchestrator-testers-compose.yml",
     "dc-build-orchestrator": "npm run dc-orchestrator build",
     "dc-up-orchestrator": "npm run dc-orchestrator up",
+
     "dc-build": "npm run dc-orchestrator-testers build",
     "dc-up": "npm run dc-orchestrator-testers up",
     "dc-down": "npm run dc-orchestrator-testers down",
+
+    "dc-build-debug-orchestrator": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_orchestrator.yml build",
+    "dc-up-debug-orchestrator": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_orchestrator.yml up",
+
     "dc-build-debug-app": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_app-scanner.yml build",
     "dc-up-debug-app": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_app-scanner.yml up",
     "//": "Containers must be up before running exec commands.",
