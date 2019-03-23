@@ -98,7 +98,7 @@
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",
   "devDependencies": {
-    "code": "^5.2.0",
+    "code": "^5.2.4",
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.9.0",
