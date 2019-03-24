@@ -87,7 +87,7 @@
     "convict": "^4.4.1",
     "diff": "^4.0.1",
     "hapi": "^18.1.0",
-    "hapi-good-winston": "^2.0.1",
+    "hapi-good-winston": "^2.1.0",
     "inert": "^5.1.2",
     "joi": "^14.3.1",
     "purpleteam-logger": "^1.0.0",
