@@ -90,7 +90,7 @@
     "hapi-good-winston": "^2.1.0",
     "inert": "^5.1.2",
     "joi": "^14.3.1",
-    "purpleteam-logger": "^1.0.0",
+    "purpleteam-logger": "^1.0.1",
     "redis": "^2.8.0",
     "susie": "^3.0.0",
     "wreck": "^14.2.0"
