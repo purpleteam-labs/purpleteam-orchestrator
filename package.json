@@ -80,7 +80,7 @@
   },
   "homepage": "https://gitlab.com/purpleteam-labs/purpleteam-orchestrator/blob/master/README.md",
   "dependencies": {
-    "@gar/hapi-json-api": "^3.0.2",
+    "@gar/hapi-json-api": "^3.0.3",
     "ajv": "^6.10.0",
     "ajv-errors": "^1.0.1",
     "app-module-path": "^2.2.0",
