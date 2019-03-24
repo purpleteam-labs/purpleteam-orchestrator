@@ -88,7 +88,7 @@
     "diff": "^4.0.1",
     "hapi": "^17.5.4",
     "hapi-good-winston": "^2.0.1",
-    "inert": "^5.1.0",
+    "inert": "^5.1.2",
     "joi": "^13.6.0",
     "purpleteam-logger": "^1.0.0",
     "redis": "^2.8.0",
