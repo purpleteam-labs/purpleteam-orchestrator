@@ -22,7 +22,7 @@ const archiveOutcomes = () => {
   const { compressionLvl, fileName, dir } = outcomesConfig;
   exec(`zip ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
     if (error) {
-      log.error(`Error occurred archiving the outcomes: ${error}`, { tags: ['orchestrate'] });
+      log.error(`Error occurred archiving the outcomes: ${error}.`, { tags: ['orchestrate'] });
       return;
     }
 
@@ -38,7 +38,7 @@ const areAllTestSessionsOfAllTestersFinished = (chan, models) => {
   const targetTestSessionId = channelParts[1];
 
   const targetModel = models.find(model => model.name === targetModelName);
-  if (!targetModel) throw new Error(`Could not find the correct model to update, the channel used was ${chan}`);
+  if (!targetModel) throw new Error(`Could not find the correct model to update, the channel used was ${chan}.`);
 
   targetModel.setTestSessionFinished(targetTestSessionId);
   return models.filter(m => m.isActive()).every(m => m.areAllTestSessionsFinished());
@@ -48,7 +48,7 @@ const areAllTestSessionsOfAllTestersFinished = (chan, models) => {
 const checkForCustomMessageForCli = (update, chan, models) => {
   let message;
   if (update.event === 'testerProgress' && update.data.progress.startsWith('Tester finished:')) {
-    message = areAllTestSessionsOfAllTestersFinished(chan, models) ? 'All test sessions of all testers are finished' : undefined;
+    message = areAllTestSessionsOfAllTestersFinished(chan, models) ? 'All test sessions of all testers are finished.' : undefined;
   }
   return message;
 };
@@ -61,7 +61,7 @@ const testerWatcherCallback = (chan, message, respToolkit, models) => {
   let sseData;
   if (customMessageForCli) {
     sseData = { progress: customMessageForCli };
-    customMessageForCli === 'All test sessions of all testers are finished' && archiveOutcomes();
+    customMessageForCli === 'All test sessions of all testers are finished.' && archiveOutcomes();
   } else {
     sseData = update.data;
   }
@@ -123,7 +123,7 @@ class Orchestrate {
   async testTeamAttack(testJob) {
     const error = await clearOutcomesDir();
     if (error) {
-      this.log.error(`Clearing the outcomes directory failed. The error was: ${error}`, { tags: ['orchestrate'] });
+      this.log.error(`Clearing the outcomes directory failed. The error was: ${error}.`, { tags: ['orchestrate'] });
       throw error;
     }
     return this.testTeamAction(testJob, 'attack');
@@ -135,7 +135,7 @@ class Orchestrate {
       testerWatcherCallback(chan, message, respToolkit, testerModels);
     };
     this.testerWatcher.subscribe(channel, testerWatcherCallbackClosure);
-    const initialEvent = { id: Date.now(), event, data: { progress: `Initialising subscription to "${channel}" channel for the event "${event}"` } };
+    const initialEvent = { id: Date.now(), event, data: { progress: `Initialising subscription to "${channel}" channel for the event "${event}".` } };
     const initialResponse = respToolkit.event(initialEvent);
     return initialResponse;
     // To cancel the event stream:
