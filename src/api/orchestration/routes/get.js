@@ -32,4 +32,8 @@ module.exports = [{
       return respToolkit.file(getOutcomesArchiveFilePath(), { confine: false });
     }
   }
+}, {
+  method: 'GET',
+  path: '/status',
+  handler: () => 'orchestrator is up'
 }];
