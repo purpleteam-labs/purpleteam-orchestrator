@@ -6,7 +6,7 @@ const Inert = require('inert');
 const config = require('config/config');
 const orchestration = require('src/api/orchestration');
 
-const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.ip') });
+const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.host') });
 const log = require('purpleteam-logger').init(config.get('logger'));
 
 const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher').init({ log, redis: config.get('redis.clientCreationOptions') });
