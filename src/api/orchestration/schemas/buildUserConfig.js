@@ -234,35 +234,37 @@ const schema = {
 };
 
 const validate = ajv.compile(schema);
+const convertJsonToObj = value => ((typeof value === 'string' || value instanceof String) ? JSON.parse(value) : value);
+const deltaLogs = (initialConfig, possiblyMutatedConfig) => {
+  const deltas = jsdiff.diffJson(convertJsonToObj(initialConfig), convertJsonToObj(possiblyMutatedConfig));
+  const additionLogs = deltas.filter(d => d.added).map(cV => `Added -> ${cV.value}`);
+  const subtractionsLogs = deltas.filter(d => d.removed).map(cV => `Removed -> ${cV.value}`);
+  return [...additionLogs, ...subtractionsLogs];
+};
+
+const logDeltaLogs = (logItems) => {
+  log.notice('As part of the route validation, the following changes were made to the buildUserConfig:');
+  logItems.length ? logItems.forEach((logItem) => { log.notice(logItem, { tags: ['buildUserConfig'] }); }) : log.notice('no changes', { tags: ['buildUserConfig'] });
+};
 
 // hapi route.options.validate.payload expects no return value if all good, but a value if mutation occurred.
 // eslint-disable-next-line consistent-return
-const buildUserConfigSchema = async (serialisedBuildUserConfig) => {
-  const buildUserConfig = (typeof serialisedBuildUserConfig === 'string' || serialisedBuildUserConfig instanceof String) ? JSON.parse(serialisedBuildUserConfig) : serialisedBuildUserConfig;
-  const valid = validate(buildUserConfig);
+const validateBuildUserConfig = async (serialisedBuildUserConfig) => {
+  const buildUserConfig = convertJsonToObj(serialisedBuildUserConfig);
 
-  const mutatedSerialisedBuildUserConfig = JSON.stringify(buildUserConfig, null, 2);
-  const diff = jsdiff.diffJson(JSON.parse(serialisedBuildUserConfig), JSON.parse(mutatedSerialisedBuildUserConfig));
-  let mutated = false;
-  diff.forEach((part) => {
-    if (part.added) {
-      mutated = true;
-      log.notice(`Added ->${part.value}}`, { tags: ['buildUserConfig'] });
-    }
-    if (part.removed) {
-      mutated = true;
-      log.notice(`Removed ->${part.value}}`, { tags: ['buildUserConfig'] });
-    }
-  });
-
-  if (!valid) {
+  // Todo: Kim C: Will need to test various configs.
+  if (!validate(buildUserConfig)) {
     const validationError = new Error(JSON.stringify(validate.errors, null, 2));
     validationError.name = 'ValidationError';
     throw validationError;
   }
 
-  if (mutated) return mutatedSerialisedBuildUserConfig;
+  const possiblyMutatedSerialisedBuildUserConfig = JSON.stringify(buildUserConfig, null, 2);
+  // Todo: Kim C: Will need to test various configs.
+  const logItems = deltaLogs(serialisedBuildUserConfig, possiblyMutatedSerialisedBuildUserConfig);
+  logDeltaLogs(logItems);
+  if (logItems.length) return possiblyMutatedSerialisedBuildUserConfig;
 };
 
 
-module.exports = buildUserConfigSchema;
+module.exports = validateBuildUserConfig;

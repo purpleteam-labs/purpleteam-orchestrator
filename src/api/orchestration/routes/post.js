@@ -1,7 +1,7 @@
 // const log = require('purpleteam-logger').get();
 const Boom = require('boom'); // eslint-disable-line import/no-extraneous-dependencies
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
-const buildUserConfigSchema = require('src/api/orchestration/schemas/buildUserConfig');
+const validateBuildUserConfig = require('src/api/orchestration/schemas/buildUserConfig');
 
 
 const internals = {
@@ -16,7 +16,7 @@ const internals = {
       throw error;
     },
     // Todo: Provide full validation. Test with passing an empty payload too.
-    payload: buildUserConfigSchema
+    payload: validateBuildUserConfig
   }
 };
 
