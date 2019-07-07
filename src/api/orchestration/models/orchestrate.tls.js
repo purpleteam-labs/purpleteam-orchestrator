@@ -21,7 +21,7 @@ async function plan(testJob) { // eslint-disable-line no-unused-vars
 
   if (!isActive()) return { name, message: TestPlanUnavailable(name) };
 
-  throw new Error('Not implemented!');
+  throw new Error('Function "plan" of tls tester is not implemented!');
 }
 
 
@@ -30,16 +30,16 @@ async function attack(testJob) { // eslint-disable-line no-unused-vars
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
-  throw new Error('Not implemented!');
+  throw new Error('Function "attack" of tls tester is not implemented!');
 }
 
 
 const setTestSessionFinished = (testSessionId) => { // eslint-disable-line no-unused-vars
-  throw new Error('Not implemented!');
+  throw new Error('Function "setTestSessionFinished" of tls tester is not implemented!');
 };
 
 
-const areAllTestSessionsFinished = () => { throw new Error('Not implemented!'); };
+const areAllTestSessionsFinished = () => { throw new Error('Function "areAllTestSessionsFinished" of tls tester is not implemented!'); };
 
 
 module.exports = {
