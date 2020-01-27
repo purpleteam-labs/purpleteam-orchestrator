@@ -24,7 +24,7 @@ services:
      - "3000:3000"
     build:
       context: ../../purpleteam-app-scanner/
-        # Build-time args
+      # Build-time args
       args:
         LOCAL_USER_ID: ${LOCAL_USER_ID}
         LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}

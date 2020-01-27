@@ -31,7 +31,9 @@
     "dc-down": "npm run dc-orchestrator-testers down",
     "//": "Containers must be up before running exec commands.",
     "dc-up-shell-orchestrator": "npm run dc-orchestrator-testers -- exec orchestrator /bin/ash",
-    "dc-up-shell-app": "npm run dc-orchestrator-testers -- exec app-scanner /bin/ash"
+    "dc-up-shell-app": "npm run dc-orchestrator-testers -- exec app-scanner /bin/ash",
+    "//": "Build images with any required production build-time args",
+    "dc-build-prod": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.prod.yml build"
 
   },
   "pre-commit": [
