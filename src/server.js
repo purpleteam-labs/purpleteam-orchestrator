@@ -14,14 +14,14 @@ const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher')
 // hapi-good-winstone: https://github.com/alexandrebodin/hapi-good-winston
 //    default levels: https://github.com/alexandrebodin/hapi-good-winston/blob/master/lib/index.js
 const reporters = {
-  development: {
+  local: {
     winstonReporter: [{
       module: 'hapi-good-winston',
       name: 'goodWinston',
       args: [log, { levels: { ops: 'debug' } }]
     }]
   },
-  production: {
+  cloud: {
     winstonReporter: [{
       module: 'hapi-good-winston',
       name: 'goodWinston',

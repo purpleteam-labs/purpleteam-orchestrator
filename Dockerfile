@@ -52,8 +52,8 @@ COPY package*.json $WORKDIR
 # Required if posix needed, for winston-syslog-posix
 #RUN apk add --no-cache --virtual .gyp python make g++
 
-# In a production build, add the --production flag, as in:
-#RUN cd $WORKDIR; npm install --production
+# In a cloud build, add the --cloud flag, as in:
+#RUN cd $WORKDIR; npm install --cloud
 RUN cd $WORKDIR && npm install
 
 # Required if posix needed, for winston-syslog-posix

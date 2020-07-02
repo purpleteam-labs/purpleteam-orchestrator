@@ -13,7 +13,7 @@ services:
         LOCAL_USER_ID: ${LOCAL_USER_ID}
         LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=local
     # Following values are analogous to their Dockerfile counterparts:
     # -i : Keep STDIN open even if not attached
     # -t : Allocate a pseudo-tty

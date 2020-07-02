@@ -32,8 +32,10 @@
     "//": "Containers must be up before running exec commands.",
     "dc-up-shell-orchestrator": "npm run dc-orchestrator-testers -- exec orchestrator /bin/ash",
     "dc-up-shell-app": "npm run dc-orchestrator-testers -- exec app-scanner /bin/ash",
-    "//": "Build images with any required production build-time args",
-    "dc-build-prod": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.prod.yml build"
+    "//": "Build images with any required cloud build-time args",
+    "dc-build-cloud": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.cloud.yml build",
+    "//": "Build images with any required cloud build-time args and push them to their respective repositories.",
+    "buildAndDeployCloudImages": "./buildAndDeployCloudImages.sh"
 
   },
   "pre-commit": [

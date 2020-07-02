@@ -4,9 +4,9 @@ const path = require('path');
 const schema = {
   env: {
     doc: 'The application environment.',
-    format: ['production', 'development', 'test'],
-    default: 'production',
-    env: 'NOE_ENV'
+    format: ['cloud', 'local', 'test'],
+    default: 'cloud',
+    env: 'NODE_ENV'
   },
   logger: {
     level: {
