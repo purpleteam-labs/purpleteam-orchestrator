@@ -26,8 +26,8 @@ services:
       context: ../../purpleteam-app-scanner/
       # Build-time args
       args:
-        LOCAL_USER_ID: ${LOCAL_USER_ID}
-        LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
+        LOCAL_USER_ID: ${APP_SCANNER_USER_ID}
+        LOCAL_GROUP_ID: ${APP_SCANNER_GROUP_ID}
     environment:
       - NODE_ENV=local
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -56,8 +56,8 @@ services:
       context: ../
       # Build-time args
       args:
-        LOCAL_USER_ID: ${LOCAL_USER_ID}
-        LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
+        LOCAL_USER_ID: ${ORCHESTRATOR_USER_ID}
+        LOCAL_GROUP_ID: ${ORCHESTRATOR_GROUP_ID}
     environment:
      - NODE_ENV=local
     # Following values are analogous to their Dockerfile counterparts:
