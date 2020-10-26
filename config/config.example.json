@@ -3,21 +3,23 @@
     "level": "debug"  
   },
   "host": {
-    "host": "127.0.0.1"
+    "host": "172.25.0.110"
   },
   "testers": {
     "app": {
-      "url": "http://172.17.0.3:3000",
+      "url": "http://172.25.0.120:3000",
       "active": true
     },
     "server": {
       "url": "http://172.17.0.4:3010",
-      "active": true
+      "active": false
     },
     "tls": {
       "url": "http://172.17.0.5:3020",
-      "active": true
+      "active": false
     }
+  },
+  "outcomes": {
+    "dir": "<absolute-path-to/purpleteam/outcomes/>"
   }
 }
-
