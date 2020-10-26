@@ -25,7 +25,9 @@
 </div>
 
 
-Along with the other components in the PurpleTeam solution:
+Clone this repository.
+
+Along with the other components in the purpleteam solution:
 
 * [purpleteam](https://gitlab.com/purpleteam-labs/purpleteam) (node.js CLI, driven from CI / nightly build)
 * [purpleteam-orchestrator](https://gitlab.com/purpleteam-labs/purpleteam-orchestrator) (hapi.js orchestrator - SaaS interface, this package)
