@@ -5,8 +5,11 @@ version: "3.7"
 services:
 
   app-scanner:
+    # Supports the parent process and currently two child processes (Test Sessions)
     ports:
      - "9229:9229"
+     - "9329:9329"
+     - "9330:9330"
     command:
      - node
      - "--inspect-brk=0.0.0.0"
