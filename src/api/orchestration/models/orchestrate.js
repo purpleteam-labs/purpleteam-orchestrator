@@ -20,6 +20,7 @@ let log;
 const archiveOutcomes = () => {
   // For a lib based and richer solution: https://github.com/archiverjs/node-archiver
   const { compressionLvl, fileName, dir } = outcomesConfig;
+  log.debug(`About to write outcomes file "${fileName}" to dir "${dir}"`, { tags: ['orchestrate'] });
   exec(`zip ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
     if (error) {
       log.error(`Error occurred archiving the outcomes: ${error}.`, { tags: ['orchestrate'] });
