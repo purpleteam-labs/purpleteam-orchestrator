@@ -50,6 +50,8 @@ async function attack(testJob) {
   const hydratedTestJob = JSON.parse(testJob);
   internals.testSessions = hydratedTestJob.included.filter(resourceObj => resourceObj.type === 'testSession').map(testSessionResourceObj => ({ id: testSessionResourceObj.id, isFinished: false }));
 
+  if (internals.testSessions.length < 1 || internals.testSessions.length > 12) return { name, message: `You supplied ${internals.testSessions.length} Test Sessions in your Job. 1-12 Test Sessions are supported. Please modify your Job to fall within the 1-12 range.` };
+
   const { res, payload } = await Wreck.post(`${url}${runJobRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob }); // eslint-disable-line no-unused-vars
   const runJobPayload = payload.toString();
   log.notice(runJobPayload, { tags: ['orchestrate.app'] });
