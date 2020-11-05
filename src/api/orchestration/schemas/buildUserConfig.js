@@ -91,25 +91,14 @@ const schema = {
         usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
         passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
         submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' },
-        expectedResponseSuccess: { type: 'string', minLength: 2, maxLength: 200 },
-        expectedResponseFail: { type: 'string', minLength: 2, maxLength: 200 }
+        expectedPageSourceSuccess: { type: 'string', minLength: 2, maxLength: 200 }
       },
-      oneOf: [
-        {
-          required: [
-            'expectedResponseSuccess'
-          ]
-        }, {
-          required: [
-            'expectedResponseFail'
-          ]
-        }
-      ],
       required: [
         'passwordFieldLocater',
         'route',
         'submit',
-        'usernameFieldLocater'
+        'usernameFieldLocater',
+        'expectedPageSourceSuccess'
       ],
       title: 'SutAuthentication'
     },
