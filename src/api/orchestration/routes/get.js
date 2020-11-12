@@ -11,7 +11,7 @@ const internals = {
 
 module.exports = [{
   method: 'GET',
-  path: '/{testerName}-{sessionId}-tester-progress',
+  path: '/tester-progress/{testerName}/{sessionId}',
   options: {
     validate: internals.validate,
     handler: (request, respToolkit) => { // eslint-disable-line no-unused-vars
@@ -21,6 +21,19 @@ module.exports = [{
       const event = 'testerProgress';
       const response = model.initSSE(channel, event, respToolkit);
       return response;
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/poll-tester-progress/{testerName}/{sessionId}',
+  options: {
+    validate: internals.validate,
+    handler: (request, respToolkit) => { // eslint-disable-line no-unused-vars
+      // const { model } = request.server.app;
+      // const { testerName, sessionId } = request.params;
+      // const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`;
+      const event = 'testerProgress';
+      return respToolkit.response({ id: Date.now(), event, data: { progress: 'hi there.....' } });
     }
   }
 }, {

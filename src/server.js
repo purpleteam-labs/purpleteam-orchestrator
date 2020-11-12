@@ -1,6 +1,6 @@
 const Hapi = require('hapi');
 const hapiJsonApi = require('@gar/hapi-json-api');
-const sussie = require('susie');
+const susie = require('susie');
 const good = require('good'); // eslint-disable-line import/no-extraneous-dependencies
 const Inert = require('inert');
 const config = require('config/config');
@@ -32,7 +32,7 @@ const reporters = {
 
 
 const infrastructuralPlugins = [
-  sussie,
+  susie,
   {
     plugin: hapiJsonApi,
     options: {}
