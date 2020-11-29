@@ -9,7 +9,7 @@ const namesSessionIdsSchema = Joi.object({
 });
 
 
-const testerNameSessionId = (params) => namesSessionIdsSchema.validate(params);
+const testerNameSessionId = (params) => namesSessionIdsSchema.validate(params).value; // When error handling work needs to be done around this, review the sut.js in app-scanner.
 
 
 module.exports = { testerNameSessionId };
