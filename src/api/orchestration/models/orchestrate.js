@@ -12,7 +12,7 @@ let log;
   const promiseToReadDir = promisify(fs.readdir);
   const modelNameParts = { domain: 0, testerType: 1, fileExtension: 2 };
   const modelFileNames = await promiseToReadDir(__dirname);
-  const subModelFileNames = modelFileNames.filter(fileName => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11))); // eslint-disable-line no-confusing-arrow
+  const subModelFileNames = modelFileNames.filter((fileName) => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11))); // eslint-disable-line no-confusing-arrow
   testerModels = subModelFileNames.map(fileName => ({ ...require(`./${fileName}`), name: fileName.split('.')[modelNameParts.testerType] })); // eslint-disable-line
 })();
 
@@ -38,11 +38,11 @@ const areAllTestSessionsOfAllTestersFinished = (chan, models) => {
   const targetModelName = channelParts[0];
   const targetTestSessionId = channelParts[1];
 
-  const targetModel = models.find(model => model.name === targetModelName);
+  const targetModel = models.find((model) => model.name === targetModelName);
   if (!targetModel) throw new Error(`Could not find the correct model to update, the channel used was ${chan}.`);
 
   targetModel.setTestSessionFinished(targetTestSessionId);
-  return models.filter(m => m.isActive()).every(m => m.areAllTestSessionsFinished());
+  return models.filter((m) => m.isActive()).every((m) => m.areAllTestSessionsFinished());
 };
 
 
@@ -78,7 +78,7 @@ const clearOutcomesDir = async () => {
   try {
     const fileNames = await promiseToReadDir(dir);
     if (fileNames.length) {
-      const unlinkPromises = fileNames.map(async name => promiseToUnlink(`${dir}${name}`));
+      const unlinkPromises = fileNames.map(async (name) => promiseToUnlink(`${dir}${name}`));
       await Promise.all(unlinkPromises);
     }
   } catch (e) {
@@ -109,8 +109,8 @@ class Orchestrate {
   async testTeamAction(testJob, action) {
     this.log.notice(`The buildUserConfig used to "${action}" with, after validation and any modifications, was:\n${BuildUserConfigMaskPassword(testJob)}\n\n`, { tags: ['orchestrate'] });
 
-    testerModels.forEach(testerModel => testerModel.init(this.testersConfig[testerModel.name]));
-    const combinedTestActionResult = testerModels.map(testerModel => testerModel[action](testJob));
+    testerModels.forEach((testerModel) => testerModel.init(this.testersConfig[testerModel.name]));
+    const combinedTestActionResult = testerModels.map((testerModel) => testerModel[action](testJob));
 
     return Promise.all(combinedTestActionResult);
   }

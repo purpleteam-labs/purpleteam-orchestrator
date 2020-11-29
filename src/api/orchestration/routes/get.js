@@ -15,8 +15,7 @@ module.exports = [{
   options: {
     validate: internals.validate,
     handler: (request, respToolkit) => { // eslint-disable-line no-unused-vars
-      const { model } = request.server.app;
-      const { testerName, sessionId } = request.params;
+      const { server: { app: { model } }, params: { value: { testerName, sessionId } } } = request;
       const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`;
       const event = 'testerProgress';
       const response = model.initSSE(channel, event, respToolkit);
@@ -29,8 +28,7 @@ module.exports = [{
   options: {
     validate: internals.validate,
     handler: (request, respToolkit) => { // eslint-disable-line no-unused-vars
-      // const { model } = request.server.app;
-      // const { testerName, sessionId } = request.params;
+      // const { server: { app: { model } }, params: { value: { testerName, sessionId } } } = request;
       // const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`;
       const event = 'testerProgress';
       return respToolkit.response({ id: Date.now(), event, data: { progress: 'hi there.....' } });

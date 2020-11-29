@@ -88,8 +88,8 @@ const schema = {
       additionalProperties: false,
       properties: {
         route: { type: 'string', pattern: '^/\\w{1,200}$' },
-        usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
-        passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Posibly allow spaces for css selectors.
+        usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Possibly allow spaces for css selectors.
+        passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Possibly allow spaces for css selectors.
         submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' },
         expectedPageSourceSuccess: { type: 'string', minLength: 2, maxLength: 200 }
       },
@@ -223,11 +223,11 @@ const schema = {
 };
 
 const validate = ajv.compile(schema);
-const convertJsonToObj = value => ((typeof value === 'string' || value instanceof String) ? JSON.parse(value) : value);
+const convertJsonToObj = (value) => ((typeof value === 'string' || value instanceof String) ? JSON.parse(value) : value);
 const deltaLogs = (initialConfig, possiblyMutatedConfig) => {
   const deltas = jsdiff.diffJson(convertJsonToObj(initialConfig), convertJsonToObj(possiblyMutatedConfig));
-  const additionLogs = deltas.filter(d => d.added).map(cV => `Added -> ${cV.value}`);
-  const subtractionsLogs = deltas.filter(d => d.removed).map(cV => `Removed -> ${cV.value}`);
+  const additionLogs = deltas.filter((d) => d.added).map((cV) => `Added -> ${cV.value}`);
+  const subtractionsLogs = deltas.filter((d) => d.removed).map((cV) => `Removed -> ${cV.value}`);
   return [...additionLogs, ...subtractionsLogs];
 };
 
