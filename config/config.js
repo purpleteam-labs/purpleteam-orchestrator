@@ -1,5 +1,8 @@
 const convict = require('convict');
+const convictFormatWithValidator = require('convict-format-with-validator');
 const path = require('path');
+
+convict.addFormat(convictFormatWithValidator.url);
 
 const schema = {
   env: {

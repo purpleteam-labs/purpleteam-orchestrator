@@ -8,7 +8,7 @@ require('ajv-errors')(ajv);
 
 const config = require('config/config');
 
-const configSchemaProps = config.getSchema().properties;
+const configSchemaProps = config.getSchema()._cvtProperties; // eslint-disable-line no-underscore-dangle
 
 const log = require('purpleteam-logger').init(config.get('logger'));
 
@@ -57,13 +57,13 @@ const schema = {
         sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] }, // https://github.com/epoberezkin/ajv/issues/832
         sutPort: { type: 'integer', minimum: 1, maximum: 65535 },
         sutProtocol: { type: 'string', enum: ['https', 'http'], default: 'https' },
-        browser: { type: 'string', enum: configSchemaProps.sut.properties.browser.format, default: config.get('sut.browser') },
+        browser: { type: 'string', enum: configSchemaProps.sut._cvtProperties.browser.format, default: config.get('sut.browser') }, // eslint-disable-line no-underscore-dangle
         loggedInIndicator: { type: 'string', minLength: 1 },
         reportFormats: {
           type: 'array',
           items: {
             type: 'string',
-            enum: configSchemaProps.sut.properties.reportFormat.format
+            enum: configSchemaProps.sut._cvtProperties.reportFormat.format // eslint-disable-line no-underscore-dangle
           },
           additionalItems: false,
           uniqueItems: true,

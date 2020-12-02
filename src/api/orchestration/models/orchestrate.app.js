@@ -1,5 +1,5 @@
 const log = require('purpleteam-logger').get();
-const Wreck = require('wreck');
+const Wreck = require('@hapi/wreck');
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
 
 const internals = {

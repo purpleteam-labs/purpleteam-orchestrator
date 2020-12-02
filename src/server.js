@@ -1,7 +1,7 @@
 const Hapi = require('hapi');
 const hapiJsonApi = require('@gar/hapi-json-api');
 const susie = require('susie');
-const good = require('good'); // eslint-disable-line import/no-extraneous-dependencies
+const good = require('good');
 const Inert = require('inert');
 const config = require('config/config');
 const orchestration = require('src/api/orchestration');
