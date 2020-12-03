@@ -1,5 +1,6 @@
 const jsdiff = require('diff');
 const Ajv = require('ajv');
+const Bourne = require('@hapi/bourne');
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true, removeAdditional: true });
 
@@ -223,7 +224,7 @@ const schema = {
 };
 
 const validate = ajv.compile(schema);
-const convertJsonToObj = (value) => ((typeof value === 'string' || value instanceof String) ? JSON.parse(value) : value);
+const convertJsonToObj = (value) => ((typeof value === 'string' || value instanceof String) ? Bourne.parse(value) : value);
 const deltaLogs = (initialConfig, possiblyMutatedConfig) => {
   const deltas = jsdiff.diffJson(convertJsonToObj(initialConfig), convertJsonToObj(possiblyMutatedConfig));
   const additionLogs = deltas.filter((d) => d.added).map((cV) => `Added -> ${cV.value}`);

@@ -1,3 +1,5 @@
+const Bourne = require('@hapi/bourne');
+
 const Orchestration = {
   TesterUnavailable: (tester) => `No ${tester} testing available currently. The ${tester} tester is currently in-active.`,
   TestPlanUnavailable: (tester) => `No test plan available for the ${tester} tester. The ${tester} tester is currently in-active.`,
@@ -6,7 +8,7 @@ const Orchestration = {
 
     if (typeof config === 'string') {
       try {
-        configClone = JSON.parse(config);
+        configClone = Bourne.parse(config);
       } catch (e) {
         return 'JSON parsing failed. Build user config was invalid JSON.';
       }
