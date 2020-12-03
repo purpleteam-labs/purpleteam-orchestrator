@@ -1,4 +1,4 @@
-const Boom = require('boom'); // eslint-disable-line
+const Boom = require('@hapi/boom'); // eslint-disable-line
 const { testerNameSessionId } = require('src/api/orchestration/schemas/testers');
 
 const internals = {

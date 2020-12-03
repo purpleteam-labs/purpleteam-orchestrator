@@ -1,5 +1,5 @@
 // const log = require('purpleteam-logger').get();
-const Boom = require('boom'); // eslint-disable-line import/no-extraneous-dependencies
+const Boom = require('@hapi/boom'); // eslint-disable-line import/no-extraneous-dependencies
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
 const validateBuildUserConfig = require('src/api/orchestration/schemas/buildUserConfig');
 
