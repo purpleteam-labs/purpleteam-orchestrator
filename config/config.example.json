@@ -20,6 +20,9 @@
     }
   },
   "outcomes": {
-    "dir": "<absolute-path-to/purpleteam/outcomes/>"
+    "dir": "</absolute-path-to/purpleteam/outcomes/>"
+  },
+  "testerFeedbackComms": {
+    "medium": "lp"
   }
 }

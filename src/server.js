@@ -9,7 +9,12 @@ const orchestration = require('src/api/orchestration');
 const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.host') });
 const log = require('purpleteam-logger').init(config.get('logger'));
 
-const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher').init({ log, redis: config.get('redis.clientCreationOptions') });
+const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher').serverStart({
+  log,
+  redis: config.get('redis.clientCreationOptions'),
+  testerFeedbackCommsMedium: config.get('testerFeedbackComms.medium'),
+  longPollTimeout: config.get('testerFeedbackComms.longPoll.timeout')
+});
 
 // hapi-good-winstone: https://github.com/alexandrebodin/hapi-good-winston
 //    default levels: https://github.com/alexandrebodin/hapi-good-winston/blob/master/lib/index.js

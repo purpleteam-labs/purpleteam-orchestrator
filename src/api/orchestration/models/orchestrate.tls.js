@@ -39,7 +39,7 @@ const setTestSessionFinished = (testSessionId) => { // eslint-disable-line no-un
 };
 
 
-const areAllTestSessionsFinished = () => { throw new Error('Function "areAllTestSessionsFinished" of tls tester is not implemented!'); };
+const areAllTestSessionsFinishedOrNoneExist = () => { throw new Error('Function "areAllTestSessionsFinishedOrNoneExist" of tls tester is not implemented!'); };
 
 
 module.exports = {
@@ -48,5 +48,5 @@ module.exports = {
   plan,
   attack,
   setTestSessionFinished,
-  areAllTestSessionsFinished
+  areAllTestSessionsFinishedOrNoneExist
 };

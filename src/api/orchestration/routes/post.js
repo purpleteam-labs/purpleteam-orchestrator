@@ -1,8 +1,6 @@
-// const log = require('purpleteam-logger').get();
 const Boom = require('@hapi/boom'); // eslint-disable-line import/no-extraneous-dependencies
 const { Orchestration: { BuildUserConfigMaskPassword } } = require('src/strings');
 const validateBuildUserConfig = require('src/api/orchestration/schemas/buildUserConfig');
-
 
 const internals = {
   validate: {
@@ -43,7 +41,13 @@ module.exports = [{
 
 
       const { model } = request.server.app;
-      const runJob = await model.testTeamAttack(request.payload);
+      let runJob;
+      try {
+        runJob = await model.testTeamAttack(request.payload);
+      } catch (e) {
+        // Errors with statusCode 500 have their messages hidden from the end user: https://hapi.dev/module/boom/api/?v=9.1.0#http-5xx-errors
+        throw Boom.boomify(e, { statusCode: e.statusCode || 500 });
+      }
 
 
       // Start each tester with their jobs (provide argument for planOnly)

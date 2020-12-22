@@ -6,7 +6,7 @@
   <br/>
 <br/>
 <h2>purpleteam orchestrator</h2><br/>
-  Currently in heavy development
+  Currently in alpha
 <br/><br/>
 
 <a href="https://gitlab.com/purpleteam-labs/purpleteam-orchestrator/commits/master" title="pipeline status">
@@ -32,7 +32,14 @@ Clone this repository.
 npm install
 ```
 
-Copy the config/config.example.json to config/config.local.json  
+# Configuration
 
-Todo: Detail the host and container outcomes directories
+Copy the config/config.example.json to config/config.local.json.  
+Use the config/config.js for documentation and further examples.  
+
+**`outcomes.dir`** Configure this value. This needs to be a directory of your choosing that both the orchestrator and app-scanner containers use. The `outcomes.dir` value should be the same as the testers `slave.report.dir` and `results.dir` value. The directory you choose and configure needs group `rwx` permissions applied to it becuase the orchestrator and tester containers share the same group, they also read, write and delete outcome files within this directory.
+
+**`testerFeedbackComms.medium`** Long Polling `lp` is supported in both `local` and `cloud` environments. Server Sent Events `sse` is only supported in the `local` environment due to AWS limitations. Both `lp` and `sse` are real-time. Both implementations have their pros and cons.
+
+See the CLI documentation for further details around this value.
 

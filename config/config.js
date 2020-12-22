@@ -110,7 +110,7 @@ const schema = {
   },
   outcomes: {
     dir: {
-      doc: 'The directory that stores Tester results and Slave reports.',
+      doc: 'The directory that stores Tester results and Slave reports. This directory needs group rwx permissions.',
       format: String,
       default: '/var/log/purpleteam/outcomes/'
     },
@@ -123,6 +123,20 @@ const schema = {
       doc: 'The compression level of the outcomes archive file',
       format: ['-0', '-1', '-2', '-3', '-4', '-5', '-6', '-7', '-8', '-9'],
       default: '-6'
+    }
+  },
+  testerFeedbackComms: {
+    medium: {
+      doc: 'The messaging medium used for tester[feedback] events. Both Server Sent Events and Long Polling are supported in the local environment, but only Long Polling is supported in the cloud environment due to AWS limitations',
+      format: ['sse', 'lp'],
+      default: 'lp'
+    },
+    longPoll: {
+      timeout: {
+        doc: 'A double that expresses seconds to wait for blocking Redis commands. We need to timeout well before the AWS Api Gateway timeout.',
+        format: Number,
+        default: 20.0
+      }
     }
   }
 };

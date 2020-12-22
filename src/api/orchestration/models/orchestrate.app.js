@@ -71,7 +71,7 @@ const setTestSessionFinished = (testSessionId) => {
 };
 
 
-const areAllTestSessionsFinished = () => internals.testSessions.every((tS) => tS.isFinished);
+const areAllTestSessionsFinishedOrNoneExist = () => internals.testSessions.every((tS) => tS.isFinished);
 
 
 module.exports = {
@@ -80,5 +80,5 @@ module.exports = {
   plan,
   attack,
   setTestSessionFinished,
-  areAllTestSessionsFinished
+  areAllTestSessionsFinishedOrNoneExist
 };
