@@ -6,7 +6,7 @@
   <br/>
 <br/>
 <h2>purpleteam orchestrator</h2><br/>
-  Currently in alpha
+  Orchestrator component of <a href="https://purpleteam-labs.com/" title="purpleteam">purpleteam</a> - Currently in alpha
 <br/><br/>
 
 <a href="https://gitlab.com/purpleteam-labs/purpleteam-orchestrator/commits/main" title="pipeline status">
