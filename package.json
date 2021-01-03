@@ -1,7 +1,7 @@
 {
   "name": "purpleteam-orchestrator",
   "version": "0.1.0-alpha.1",
-  "description": "",
+  "description": "Orchestrator component of purpleteam -- security regression testing SaaS",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
@@ -76,9 +76,9 @@
     "zap"
   ],
   "author": "Kim Carter",
-  "license": "",
+  "license": "AGPL-3.0-only",
   "bugs": {
-    "url": "https://gitlab.com/purpleteam-labs/purpleteam-orchestrator/issues"
+    "url": "https://gitlab.com/purpleteam-labs/purpleteam/issues"
   },
   "homepage": "https://gitlab.com/purpleteam-labs/purpleteam-orchestrator/blob/master/README.md",
   "dependencies": {
