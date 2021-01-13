@@ -98,7 +98,7 @@ const schema = {
         'version'
       ],
       title: 'DataAttributes',
-      errorMessage: { properties: { loggedInIndicator: 'A loggedInIndicator is required by the App slave in order to know if a login was successful' } }
+      errorMessage: { properties: { loggedInIndicator: 'A loggedInIndicator is required by the App emissary in order to know if a login was successful' } }
     },
     SutAuthentication: {
       type: 'object',
