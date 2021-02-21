@@ -30,8 +30,8 @@ services:
         LOCAL_GROUP_ID: ${APP_SCANNER_GROUP_ID}
     environment:
       - NODE_ENV=local
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY_ID=arbitrary_aws_access_key_id
+      - AWS_SECRET_ACCESS_KEY=arbitrary_aws_secret_access_key
     # Following values are analogous to their Dockerfile counterparts:
     # -i : Keep STDIN open even if not attached
     # -t : Allocate a pseudo-tty
@@ -41,7 +41,7 @@ services:
     volumes:
      - type: bind
        source: ${HOST_DIR}
-       target: ${CONT_DIR}
+       target: /var/log/purpleteam/outcomes
 
   orchestrator:
     depends_on:
@@ -69,5 +69,5 @@ services:
     volumes:
      - type: bind
        source: ${HOST_DIR}
-       target: ${CONT_DIR}
+       target: /var/log/purpleteam/outcomes
 

@@ -20,7 +20,7 @@
     "dc-up-orchestrator": "npm run dc-orchestrator up",
     "// AWS: Setting Credentials in Node.js": "https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html",
     "// AWS Credentials into a Docker Container without Hardcoding It": "https://cameroneckelberry.co/words/getting-aws-credentials-into-a-docker-container-without-hardcoding-it",
-    "dc-orchestrator-testers": "APP_SCANNER_GROUP_ID=$(id -g) APP_SCANNER_USER_ID=$(id -u) ORCHESTRATOR_GROUP_ID=$(id -g) ORCHESTRATOR_USER_ID=$(id -u) AWS_ACCESS_KEY_ID=$(aws --profile default configure get aws_access_key_id) AWS_SECRET_ACCESS_KEY=$(aws --profile default configure get aws_secret_access_key) docker-compose -f ./compose/orchestrator-testers-compose.yml",
+    "dc-orchestrator-testers": "APP_SCANNER_GROUP_ID=$(id -g) APP_SCANNER_USER_ID=$(id -u) ORCHESTRATOR_GROUP_ID=$(id -g) ORCHESTRATOR_USER_ID=$(id -u) docker-compose -f ./compose/orchestrator-testers-compose.yml",
     "// orchestrator debugging": "following commands",
     "dc-build-debug-orchestrator": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_orchestrator.yml build",
     "dc-up-debug-orchestrator": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_orchestrator.yml up",
