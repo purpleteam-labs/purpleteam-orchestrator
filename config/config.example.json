@@ -20,7 +20,7 @@
     }
   },
   "outcomes": {
-    "dir": "</absolute-path-to/purpleteam/outcomes/>"
+    "dir": "/var/log/purpleteam/outcomes/"
   },
   "testerFeedbackComms": {
     "medium": "lp"

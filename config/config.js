@@ -126,7 +126,7 @@ const schema = {
   },
   outcomes: {
     dir: {
-      doc: 'The directory that stores Tester results and Emissary reports. This directory needs group rwx permissions.',
+      doc: 'The directory that stores Tester results and Emissary reports.',
       format: String,
       default: '/var/log/purpleteam/outcomes/'
     },
