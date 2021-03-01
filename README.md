@@ -32,6 +32,8 @@
 </div>
 
 
+If you are setting up the orchestrator, you will be targeting the `local` environment.
+
 Clone this repository.
 
 `cd` to the repository root directory and run:  
@@ -46,5 +48,9 @@ Use the config/config.js for documentation and further examples.
 
 **`testerFeedbackComms.medium`** Long Polling `lp` is supported in both `local` and `cloud` environments. Server Sent Events `sse` is only supported in the `local` environment due to AWS limitations. Both `lp` and `sse` are real-time. Both implementations have their pros and cons.
 
-See the [CLI documentation](https://github.com/purpleteam-labs/purpleteam#configure) for further details around this value.
+See the [purpleteam CLI documentation](https://github.com/purpleteam-labs/purpleteam#configure) for further details around this value.
+
+<br>
+
+Once you have cloned, installed and configured the orchestrator, head back to the [local setup](https://doc.purpleteam-labs.com/local/local-setup.html) documentation to continue setting up the other purpleteam components.
 
