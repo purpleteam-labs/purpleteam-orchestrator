@@ -99,7 +99,7 @@
     "hapi-good-winston": "^3.0.1",
     "joi": "^17.3.0",
     "purpleteam-logger": "^1.0.2",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "susie": "^3.0.0"
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",
