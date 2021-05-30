@@ -20,10 +20,6 @@
   <a href='https://coveralls.io/github/purpleteam-labs/purpleteam-orchestrator?branch=main'>
     <img src='https://coveralls.io/repos/github/purpleteam-labs/purpleteam-orchestrator/badge.svg?branch=main' alt='test coverage'>
   </a>
-
-  <a href="https://github.com/purpleteam-labs/purpleteam-orchestrator/releases" title="latest release">
-    <img src="https://img.shields.io/github/v/release/purpleteam-labs/purpleteam-orchestrator?color=%23794fb8&include_prereleases" alt="GitHub release (latest SemVer including pre-releases)">
-  </a>
 <br/><br/><br/>
 </div>
 

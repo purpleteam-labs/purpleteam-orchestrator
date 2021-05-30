@@ -16,9 +16,11 @@
 
 const jsdiff = require('diff');
 const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
 const Bourne = require('@hapi/bourne');
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true, removeAdditional: true });
+addFormats(ajv);
 
 // Todo: KC: Make error messages more meaningful.
 require('ajv-errors')(ajv);
@@ -82,7 +84,6 @@ const schema = {
             type: 'string',
             enum: configSchemaProps.sut._cvtProperties.reportFormat.format // eslint-disable-line no-underscore-dangle
           },
-          additionalItems: false,
           uniqueItems: true,
           minItems: 1
         }
@@ -107,7 +108,7 @@ const schema = {
         route: { type: 'string', pattern: '^/\\w{1,200}$' },
         usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Possibly allow spaces for css selectors.
         passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Possibly allow spaces for css selectors.
-        submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' },
+        submit: { type: 'string', pattern: '^[a-zA-Z0-9_\\-\\s]{1,100}$' },
         expectedPageSourceSuccess: { type: 'string', minLength: 2, maxLength: 200 }
       },
       required: [
@@ -142,10 +143,10 @@ const schema = {
       },
       required: ['id', 'type'],
       if: { properties: { type: { enum: ['testSession'] } } },
-      then: { properties: { id: { pattern: '^\\w{1,200}$' } } },
+      then: { properties: { id: { type: 'string', pattern: '^\\w{1,200}$' } } },
       else: {
         if: { properties: { type: { enum: ['route'] } } },
-        then: { properties: { id: { pattern: '^/\\w{1,200}$' } } }
+        then: { properties: { id: { type: 'string', pattern: '^/\\w{1,200}$' } } }
       },
       title: 'ResourceLinkage'
     },
@@ -167,7 +168,7 @@ const schema = {
       if: { properties: { type: { enum: ['testSession'] } } },
       then: {
         properties: {
-          id: { pattern: '^\\w{1,200}$' },
+          id: { type: 'string', pattern: '^\\w{1,200}$' },
           attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTestSession' },
           relationships: { $ref: '#/definitions/Relationships' }
         },
@@ -177,7 +178,7 @@ const schema = {
         if: { properties: { type: { enum: ['route'] } } },
         then: {
           properties: {
-            id: { pattern: '^/\\w{1,200}$' },
+            id: { type: 'string', pattern: '^/\\w{1,200}$' },
             attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
           }
         }
@@ -195,7 +196,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        username: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' },
+        username: { type: 'string', pattern: '^[a-zA-Z0-9_\\-]{1,100}$' },
         password: { type: 'string' },
         aScannerAttackStrength: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH', 'INSANE'] },
         aScannerAlertThreshold: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH'] },
@@ -216,7 +217,7 @@ const schema = {
           minItems: 0
         },
         method: { type: 'string', enum: ['GET', 'PUT', 'POST'] },
-        submit: { type: 'string', pattern: '^[a-zA-Z0-9_-\\s]{1,100}$' }
+        submit: { type: 'string', pattern: '^[a-zA-Z0-9_\\-\\s]{1,100}$' }
       },
       required: ['attackFields', 'method', 'submit'],
       title: 'AttributesObjOfTopLevelResourceObjectOfTypeRoute'
@@ -226,7 +227,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        name: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' },
+        name: { type: 'string', pattern: '^[a-zA-Z0-9_\\-]{1,100}$' },
         value: { type: 'string' },
         visible: { type: 'boolean' } // Todo: KC: Need to check whether visible should be required.
       },

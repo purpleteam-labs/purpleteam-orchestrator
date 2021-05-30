@@ -20,4 +20,5 @@ config.*.json
 *.zip
 
 buildAndDeployCloudImages.sh
+*.code-workspace
 
