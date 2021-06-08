@@ -117,8 +117,12 @@
     "index.js",
     "Dockerfile",
     "healthcheck.js",
-    "compose",
-    "config",
+    "compose/.env.example",
+    "compose/orchestrator-testers-compose.yml",
+    "compose/orchestrator-testers-compose.debug_app-scanner.yml",
+    "compose/orchestrator-testers-compose.debug_orchestrator.yml",
+    "config/config.js",
+    "config/config.example.json",
     "src"
   ]
 }
