@@ -104,12 +104,12 @@ const schema = {
     tls: {
       name: 'tls',
       url: {
-        doc: 'The url of the  tls-checker microservice.',
+        doc: 'The url of the  tls-scanner microservice.',
         format: 'url',
         default: 'https://127.0.0.1:1000'
       },
       active: {
-        doc: 'Whether or not the tls-checker microservice is active.',
+        doc: 'Whether or not the tls-scanner microservice is active.',
         format: 'Boolean',
         default: true
       },
