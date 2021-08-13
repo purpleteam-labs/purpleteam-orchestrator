@@ -105,7 +105,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        route: { type: 'string', pattern: '^/\\w{1,200}$' },
+        route: { type: 'string', pattern: '^/[-\\w/_]{1,200}$' },
         usernameFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Possibly allow spaces for css selectors.
         passwordFieldLocater: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,100}$' }, // Possibly allow spaces for css selectors.
         submit: { type: 'string', pattern: '^[a-zA-Z0-9_\\-\\s]{1,100}$' },
@@ -143,10 +143,10 @@ const schema = {
       },
       required: ['id', 'type'],
       if: { properties: { type: { enum: ['testSession'] } } },
-      then: { properties: { id: { type: 'string', pattern: '^\\w{1,200}$' } } },
+      then: { properties: { id: { type: 'string', pattern: '^[-\\w/_]{1,200}$' } } },
       else: {
         if: { properties: { type: { enum: ['route'] } } },
-        then: { properties: { id: { type: 'string', pattern: '^/\\w{1,200}$' } } }
+        then: { properties: { id: { type: 'string', pattern: '^/[-\\w/_]{1,200}$' } } }
       },
       title: 'ResourceLinkage'
     },
@@ -168,7 +168,7 @@ const schema = {
       if: { properties: { type: { enum: ['testSession'] } } },
       then: {
         properties: {
-          id: { type: 'string', pattern: '^\\w{1,200}$' },
+          id: { type: 'string', pattern: '^[-\\w/_]{1,200}$' },
           attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTestSession' },
           relationships: { $ref: '#/definitions/Relationships' }
         },
@@ -178,7 +178,7 @@ const schema = {
         if: { properties: { type: { enum: ['route'] } } },
         then: {
           properties: {
-            id: { type: 'string', pattern: '^/\\w{1,200}$' },
+            id: { type: 'string', pattern: '^/[-\\w/_]{1,200}$' },
             attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
           }
         }
