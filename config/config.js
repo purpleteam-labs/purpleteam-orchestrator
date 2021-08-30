@@ -15,10 +15,12 @@
 // along with purpleteam. If not, see <https://www.gnu.org/licenses/>.
 
 const convict = require('convict');
-const convictFormatWithValidator = require('convict-format-with-validator');
+const { duration } = require('convict-format-with-moment');
+const { url } = require('convict-format-with-validator');
 const path = require('path');
 
-convict.addFormat(convictFormatWithValidator.url);
+convict.addFormat(duration);
+convict.addFormat(url);
 
 const schema = {
   env: {
@@ -32,6 +34,18 @@ const schema = {
       doc: 'Write all log events with this level and below. Syslog levels used: https://github.com/winstonjs/winston#logging-levels',
       format: ['emerg', 'alert', 'crit', 'error', 'warning', 'notice', 'info', 'debug'],
       default: 'info'
+    }
+  },
+  processMonitoring: {
+    on: {
+      doc: 'Whether or not to capture and log process events.',
+      format: 'Boolean',
+      default: false
+    },
+    interval: {
+      doc: 'The interval in milliseconds to capture and log the process events.',
+      format: 'duration',
+      default: 10000
     }
   },
   host: {
@@ -63,11 +77,6 @@ const schema = {
       doc: 'The type of browser to run tests through.',
       format: ['chrome', 'firefox'],
       default: 'chrome'
-    },
-    reportFormat: {
-      doc: 'The supported formats that reports may be written in.',
-      format: ['html', 'json', 'md'],
-      default: 'html'
     }
   },
   testers: {
@@ -84,7 +93,8 @@ const schema = {
         default: true
       },
       testPlanRoute: '/test-plan',
-      runJobRoute: '/run-job'
+      initTesterRoute: '/init-tester',
+      startTesterRoute: '/start-tester'
     },
     server: {
       name: 'server',
@@ -99,7 +109,8 @@ const schema = {
         default: true
       },
       testPlanRoute: '/test-plan',
-      runJobRoute: '/run-job'
+      initTesterRoute: '/init-tester',
+      startTesterRoute: '/start-tester'
     },
     tls: {
       name: 'tls',
@@ -114,14 +125,15 @@ const schema = {
         default: true
       },
       testPlanRoute: '/test-plan',
-      runJobRoute: '/run-job'
+      initTesterRoute: '/init-tester',
+      startTesterRoute: '/start-tester'
     }
   },
-  buildUserConfig: {
+  job: {
     version: {
-      doc: 'The version of the build user config accepted by this API.',
-      format: ['0.1.0-alpha.1'],
-      default: '0.1.0-alpha.1'
+      doc: 'The version of the Job accepted by this API.',
+      format: ['0.1.0-alpha.1', '1.0.0-alpha.3'],
+      default: '1.0.0-alpha.3'
     }
   },
   outcomes: {

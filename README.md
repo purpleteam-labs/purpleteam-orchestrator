@@ -6,7 +6,7 @@
   <br/>
   <br/>
   <h2>purpleteam orchestrator</h2><br/>
-    Orchestrator component of <a href="https://purpleteam-labs.com/" title="purpleteam">purpleteam</a> - Currently in alpha
+    Orchestrator component of <a href="https://purpleteam-labs.com/" title="purpleteam"><em>PurpleTeam</em></a> - Currently in alpha
   <br/><br/>
 
   <a href="https://www.gnu.org/licenses/agpl-3.0" title="license">
@@ -24,9 +24,11 @@
 </div>
 
 
-If you are setting up the orchestrator, you will be targeting the `local` environment.
+If you are setting up the _orchestrator_, you will be targeting the `local` environment.
 
-Clone this repository.
+Clone or fork this repository.
+
+If you are developing this project:
 
 `cd` to the repository root directory and run:  
 ```shell
@@ -38,11 +40,45 @@ npm install
 Copy the config/config.example.json to config/config.local.json.  
 Use the config/config.js for documentation and further examples.  
 
-**`testerFeedbackComms.medium`** Long Polling `lp` is supported in both `local` and `cloud` environments. Server Sent Events `sse` is only supported in the `local` environment due to AWS limitations. Both `lp` and `sse` are real-time. Both implementations have their pros and cons.
+### `testerFeedbackComms.medium`
 
-See the [purpleteam CLI documentation](https://github.com/purpleteam-labs/purpleteam#configure) for further details around this value.
+Long Polling (`lp`) is supported in both `local` and `cloud` environments. Server Sent Events (`sse`) is only supported in the `local` environment due to AWS limitations. Both `lp` and `sse` are real-time. Both implementations have their pros and cons.
+
+The client-side (_PurpleTeam_ CLI) will use the `testerFeedbackComms.medium` that the _orchestrator_ instructs it to use.
+
+#### `sse`
+
+Using `sse` is one way communications after the initial subscription from the CLI to the _orchestrator_. Redis pub/sub is used between the _Testers_ and the _orchestrator_ to publish _Tester_ feedback. If the CLI is stopped (not subscribed) at any point while the back-end is performing a _Test Run_, events will be lost. If the CLI runs `test` again before the _Test Run_ is complete, it will receive messages from then to _Test Run_ completion, and will also receive the _Outcomes_ archive on _Test Run_ completion. If the CLI runs `test` after a _Test Run_ is complete, no messages will be received from the previous _Test Run_, the previous _Test Runs_ _Outcomes_ archive is destroyed, and the CLI will start receiving messages as _Tester_ feedback is produced.
+
+#### `lp`
+
+Using `lp` is request-response communications. A request is made and only answered when there are [_Tester_](https://purpleteam-labs.com/doc/definitions/) feedback messages available, or the application specific (rather than AWS Api Gateway) time-out is exceeded.
+
+As soon as the CLI receives a set (one to many) of _Tester_ feedback messages, it makes another request to the _orchestrator_ (if running in `local` env), or API (if running in `cloud` env). Redis pub/sub is used between the _Testers_ and the _orchestrator_ to publish _Tester_ feedback.  
+
+A little more detail:
+
+If running in the `cloud` environment the first set of _Tester_ feedback messages are persisted in the _orchestrator_'s memory, and subsequent _Tester_ feedback messages are persisted to in-memory Redis lists. The reasons for this are at least two-fold. The _orchestrator_ sets up the subscriptions to the Redis channels on behalf of the CLI. The reasons for this is so that:
+
+* The _orchestrator_ knows when the _Testers_ are finished in order to clean-up before the next _Test Run_
+* and to make sure that no messages are missed due to the CLI either being off-line or late to subscribe
+
+This means that if the CLI is stopped momentarily during a _Test Run_ or if _Tester_ messages pile up before the CLI has subscribed (which normally occurs on receipt of the initial set of _Tester_ status messages), as long as the CLI subscribes before the _Test Run_ has completed, it will receive all stored _Tester_ feedback messages and the _Outcomes_ archive when the _Test Run_ is complete.
+
+
+
+
+
+
+
+
+
+
+
+
+> Additional background: This may change in the future, WebSockets is also an option we may implement in the future, but implementing WebSockets would mean we would have to change our entire authn approach. Our chosen cloud infrastructure AWS Api Gateway does not support streaming and it does not support the OAuth Client Credentials Flow with Cognito User Pools.
+
 
 <br>
 
-Once you have cloned, installed and configured the orchestrator, head back to the [local setup](https://doc.purpleteam-labs.com/local/local-setup.html) documentation to continue setting up the other purpleteam components.
-
+Once you have worked through the above steps, head back to the [local setup](https://purpleteam-labs.com/doc/local/set-up/) documentation to continue setting up the other _PurpleTeam_ components.

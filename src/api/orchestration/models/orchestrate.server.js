@@ -1,18 +1,18 @@
 // Copyright (C) 2017-2021 BinaryMist Limited. All rights reserved.
 
-// This file is part of purpleteam.
+// This file is part of PurpleTeam.
 
-// purpleteam is free software: you can redistribute it and/or modify
+// PurpleTeam is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation version 3.
 
-// purpleteam is distributed in the hope that it will be useful,
+// PurpleTeam is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Affero General Public License for more details.
 
 // You should have received a copy of the GNU Affero General Public License
-// along with purpleteam. If not, see <https://www.gnu.org/licenses/>.
+// along with PurpleTeam. If not, see <https://www.gnu.org/licenses/>.
 
 const log = require('purpleteam-logger').get(); // eslint-disable-line no-unused-vars
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
@@ -20,7 +20,7 @@ const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('s
 
 const internals = {
   testerConfig: null,
-  testSessions: []
+  jobTestSessions: []
 };
 
 
@@ -37,32 +37,44 @@ async function plan(testJob) { // eslint-disable-line no-unused-vars
 
   if (!isActive()) return { name, message: TestPlanUnavailable(name) };
 
-  throw new Error('Function "plan" of server tester is not implemented!');
+  throw new Error('Function "plan" of server Tester is not implemented!');
 }
 
 
-async function attack(testJob) { // eslint-disable-line no-unused-vars
-  const { testerConfig: { name, url, runJobRoute, testResultRoute } } = internals; // eslint-disable-line no-unused-vars
+async function initTester(testJob) { // eslint-disable-line no-unused-vars
+  const { testerConfig: { name, url, initTesterRoute } } = internals; // eslint-disable-line no-unused-vars
+
+  internals.jobTestSessions = [{ id: 'NA' }];
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
-  throw new Error('Function "attack" of server tester is not implemented!');
+  throw new Error('Function "initTester" of server Tester is not implemented!');
+}
+
+
+function startTester() {
+  const { testerConfig: { url, startTesterRoute } } = internals; // eslint-disable-line no-unused-vars
+  if (!isActive()) return;
+
+  throw new Error('Function "startTester" of server Tester is not implemented!');
 }
 
 
 const setTestSessionFinished = (testSessionId) => { // eslint-disable-line no-unused-vars
-  throw new Error('Function "setTestSessionFinished" of server tester is not implemented!');
+  throw new Error('Function "setTestSessionFinished" of server Tester is not implemented!');
 };
 
 
-const areAllTestSessionsFinishedOrNoneExist = () => { throw new Error('Function "areAllTestSessionsFinishedOrNoneExist" of server tester is not implemented!'); };
-
+const testerFinished = () => { throw new Error('Function "testerFinished" of server Tester is not implemented!'); };
+const jobTestSessions = () => internals.jobTestSessions;
 
 module.exports = {
   init,
   isActive,
   plan,
-  attack,
+  initTester,
+  startTester,
   setTestSessionFinished,
-  areAllTestSessionsFinishedOrNoneExist
+  testerFinished,
+  jobTestSessions
 };

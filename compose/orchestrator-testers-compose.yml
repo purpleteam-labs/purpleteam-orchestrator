@@ -27,7 +27,7 @@ services:
       # Build-time args
       args:
         LOCAL_USER_ID: ${APP_SCANNER_USER_ID}
-        LOCAL_GROUP_ID: ${APP_SCANNER_GROUP_ID}
+        LOCAL_GROUP_ID: ${PT_GROUP_ID}
     environment:
       - NODE_ENV=local
       - AWS_ACCESS_KEY_ID=arbitrary_aws_access_key_id
@@ -38,6 +38,33 @@ services:
     stdin_open: true
     tty: true
     container_name: pt-app-scanner-cont
+    volumes:
+     - type: bind
+       source: ${HOST_DIR}
+       target: /var/log/purpleteam/outcomes
+
+  tls-scanner:
+    depends_on:
+     - redis
+    networks:
+      pt-net:
+        ipv4_address: 172.25.0.140
+    ports:
+     - "3020:3020"
+    build:
+      context: ../../purpleteam-tls-scanner/
+      # Build-time args
+      args:
+        LOCAL_USER_ID: ${TLS_SCANNER_USER_ID}
+        LOCAL_GROUP_ID: ${PT_GROUP_ID}
+    environment:
+      - NODE_ENV=local
+    # Following values are analogous to their Dockerfile counterparts:
+    # -i : Keep STDIN open even if not attached
+    # -t : Allocate a pseudo-tty
+    stdin_open: true
+    tty: true
+    container_name: pt-tls-scanner-cont
     volumes:
      - type: bind
        source: ${HOST_DIR}
@@ -57,7 +84,7 @@ services:
       # Build-time args
       args:
         LOCAL_USER_ID: ${ORCHESTRATOR_USER_ID}
-        LOCAL_GROUP_ID: ${ORCHESTRATOR_GROUP_ID}
+        LOCAL_GROUP_ID: ${PT_GROUP_ID}
     environment:
      - NODE_ENV=local
     # Following values are analogous to their Dockerfile counterparts:

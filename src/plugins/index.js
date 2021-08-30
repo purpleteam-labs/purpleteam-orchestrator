@@ -12,7 +12,8 @@
 // GNU Affero General Public License for more details.
 
 // You should have received a copy of the GNU Affero General Public License
-// along with PurpleTeam. If not, see <https://www.gnu.org/licenses/>.
+// along with this PurpleTeam project. If not, see <https://www.gnu.org/licenses/>.
 
-const cwd = process.cwd();
-require('app-module-path').addPath(cwd);
+const hapiEventHandler = require('./hapiEventHandler');
+
+module.exports = { hapiEventHandler };

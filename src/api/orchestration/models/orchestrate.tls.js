@@ -1,26 +1,27 @@
 // Copyright (C) 2017-2021 BinaryMist Limited. All rights reserved.
 
-// This file is part of purpleteam.
+// This file is part of PurpleTeam.
 
-// purpleteam is free software: you can redistribute it and/or modify
+// PurpleTeam is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation version 3.
 
-// purpleteam is distributed in the hope that it will be useful,
+// PurpleTeam is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Affero General Public License for more details.
 
 // You should have received a copy of the GNU Affero General Public License
-// along with purpleteam. If not, see <https://www.gnu.org/licenses/>.
+// along with PurpleTeam. If not, see <https://www.gnu.org/licenses/>.
 
-const log = require('purpleteam-logger').get(); // eslint-disable-line no-unused-vars
+const log = require('purpleteam-logger').get();
+const Wreck = require('@hapi/wreck');
+const Bourne = require('@hapi/bourne');
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
-
 
 const internals = {
   testerConfig: null,
-  testSessions: []
+  jobTestSessions: []
 };
 
 
@@ -32,37 +33,79 @@ const init = (testerConfig) => {
 const isActive = () => internals.testerConfig.active;
 
 
-async function plan(testJob) { // eslint-disable-line no-unused-vars
-  const { testerConfig: { name, url, testPlanRoute } } = internals; // eslint-disable-line no-unused-vars
+async function plan(testJob) {
+  const { testerConfig: { name, url, testPlanRoute } } = internals;
 
   if (!isActive()) return { name, message: TestPlanUnavailable(name) };
 
-  throw new Error('Function "plan" of tls tester is not implemented!');
+  const promisedResponse = Wreck.post(`${url}${testPlanRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob });
+  try {
+    const { res, payload } = await promisedResponse; // eslint-disable-line no-unused-vars
+    const testPlanPayload = payload.toString();
+
+    log.info(`\n${testPlanPayload}`, { tags: ['orchestrate.tls'] });
+    return { name, message: testPlanPayload };
+  } catch (e) {
+    const handle = {
+      errorMessageFrame: (innerMessage) => `Error occured while attempting to retrieve your test plan. Error was: ${innerMessage}`,
+      buildUserMessage: '"Tls Tester is currently unreachable"',
+      isBoom: () => e.output.payload,
+      notBoom: () => e.message
+    };
+    log.alert(handle.errorMessageFrame(JSON.stringify(handle[e.isBoom ? 'isBoom' : 'notBoom']())), { tags: ['orchestrate.app'] });
+
+    return { name, message: handle.errorMessageFrame(handle.buildUserMessage) };
+  }
 }
 
 
-async function attack(testJob) { // eslint-disable-line no-unused-vars
-  const { testerConfig: { name, url, runJobRoute, testResultRoute } } = internals; // eslint-disable-line no-unused-vars
+async function initTester(testJob) {
+  const { testerConfig: { name, url, initTesterRoute } } = internals;
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
-  throw new Error('Function "attack" of tls tester is not implemented!');
+  const hydratedTestJob = Bourne.parse(testJob);
+  const validNumberOfResourceObjects = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'tlsScanner').length === 1;
+
+  if (!validNumberOfResourceObjects) return { name, message: 'Tester failure: The only valid number of tlsScanner resource objects is one. Please modify your Job file.' };
+  internals.jobTestSessions = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'tlsScanner').map((testSessionResourceObj) => ({ id: testSessionResourceObj.id, isFinished: false }));
+
+  const { res, payload } = await Wreck.post(`${url}${initTesterRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob }); // eslint-disable-line no-unused-vars
+  // Todo: Provide similar error handling to plan.
+  const initTesterPayload = payload.toString();
+  log.info(initTesterPayload, { tags: ['orchestrate.tls'] });
+
+  return { name, message: initTesterPayload };
 }
 
 
-const setTestSessionFinished = (testSessionId) => { // eslint-disable-line no-unused-vars
-  throw new Error('Function "setTestSessionFinished" of tls tester is not implemented!');
+function startTester() {
+  const { testerConfig: { url, startTesterRoute } } = internals;
+  if (!isActive()) return;
+  Wreck.post(`${url}${startTesterRoute}`);
+}
+
+
+const setTestSessionFinished = (testSessionId) => {
+  const { jobTestSessions } = internals;
+
+  if (!testSessionId) throw new Error('There was no testSessionId supplied to the setTestSessionFinished function of the tls model');
+  if (typeof testSessionId !== 'string') throw new Error('"testSessionId" must be a string');
+
+  jobTestSessions.find((tS) => tS.id === testSessionId).isFinished = true;
 };
 
 
-const areAllTestSessionsFinishedOrNoneExist = () => { throw new Error('Function "areAllTestSessionsFinishedOrNoneExist" of tls tester is not implemented!'); };
-
+const testerFinished = () => internals.jobTestSessions.every((tS) => tS.isFinished);
+const jobTestSessions = () => internals.jobTestSessions;
 
 module.exports = {
   init,
   isActive,
   plan,
-  attack,
+  initTester,
+  startTester,
   setTestSessionFinished,
-  areAllTestSessionsFinishedOrNoneExist
+  testerFinished,
+  jobTestSessions
 };

@@ -1,18 +1,18 @@
 // Copyright (C) 2017-2021 BinaryMist Limited. All rights reserved.
 
-// This file is part of purpleteam.
+// This file is part of PurpleTeam.
 
-// purpleteam is free software: you can redistribute it and/or modify
+// PurpleTeam is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation version 3.
 
-// purpleteam is distributed in the hope that it will be useful,
+// PurpleTeam is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Affero General Public License for more details.
 
 // You should have received a copy of the GNU Affero General Public License
-// along with purpleteam. If not, see <https://www.gnu.org/licenses/>.
+// along with PurpleTeam. If not, see <https://www.gnu.org/licenses/>.
 
 const { promisify } = require('util');
 const redis = require('redis');
@@ -35,7 +35,7 @@ const subscribe = (redisChannel, callback) => {
   subscribeClients[redisChannel].on('error', (error) => {
     log.error(`Redis error: ${error}`, { tags: ['testerWatcher'] });
   });
-
+  log.info(`About to subscribe ${redisChannel} redis client to channel: ${redisChannel}`, { tags: ['testerWatcher'] });
   subscribeClients[redisChannel].on('message', callback);
 };
 
@@ -100,7 +100,10 @@ const cleanUpAfterTestRun = () => {
 const serverStart = (options) => {
   ({ log, redis: redisOptions, longPollTimeout } = options);
   const { testerFeedbackCommsMedium } = options;
-  return { lp: { pollTesterMessages, cleanUpAfterTestRun }, sse: { subscribe, cleanUpAfterTestRun } }[testerFeedbackCommsMedium];
+  return {
+    lp: { pollTesterMessages, cleanUpAfterTestRun, testerFeedbackCommsMedium },
+    sse: { subscribe, cleanUpAfterTestRun, testerFeedbackCommsMedium }
+  }[testerFeedbackCommsMedium];
 };
 
 

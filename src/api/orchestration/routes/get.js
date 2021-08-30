@@ -1,18 +1,18 @@
 // Copyright (C) 2017-2021 BinaryMist Limited. All rights reserved.
 
-// This file is part of purpleteam.
+// This file is part of PurpleTeam.
 
-// purpleteam is free software: you can redistribute it and/or modify
+// PurpleTeam is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation version 3.
 
-// purpleteam is distributed in the hope that it will be useful,
+// PurpleTeam is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Affero General Public License for more details.
 
 // You should have received a copy of the GNU Affero General Public License
-// along with purpleteam. If not, see <https://www.gnu.org/licenses/>.
+// along with PurpleTeam. If not, see <https://www.gnu.org/licenses/>.
 
 const Boom = require('@hapi/boom'); // eslint-disable-line
 const { validateTesterNameSessionId } = require('src/api/orchestration/schemas/testers');
@@ -40,7 +40,7 @@ module.exports = [{
     validate: internals.validateTesterFeedback,
     handler: (request, respToolkit) => { // eslint-disable-line no-unused-vars
       const { server: { app: { model } }, params: { testerName, sessionId } } = request;
-      const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`;
+      const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`; // We get 'NA' sent from the CLI for Tls and Server
       const event = 'testerProgress';
 
       let response;

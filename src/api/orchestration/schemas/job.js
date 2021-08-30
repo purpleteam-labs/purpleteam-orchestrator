@@ -1,18 +1,18 @@
 // Copyright (C) 2017-2021 BinaryMist Limited. All rights reserved.
 
-// This file is part of purpleteam.
+// This file is part of PurpleTeam.
 
-// purpleteam is free software: you can redistribute it and/or modify
+// PurpleTeam is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation version 3.
 
-// purpleteam is distributed in the hope that it will be useful,
+// PurpleTeam is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Affero General Public License for more details.
 
 // You should have received a copy of the GNU Affero General Public License
-// along with purpleteam. If not, see <https://www.gnu.org/licenses/>.
+// along with this PurpleTeam project. If not, see <https://www.gnu.org/licenses/>.
 
 const jsdiff = require('diff');
 const Ajv = require('ajv');
@@ -24,19 +24,23 @@ addFormats(ajv);
 
 // Todo: KC: Make error messages more meaningful.
 require('ajv-errors')(ajv);
+const purpleteamLogger = require('purpleteam-logger');
 
-const config = require('config/config');
+const internals = {
+  config: {
+    sut: null,
+    job: null
+  },
+  log: null,
+  validate: null
+};
 
-const configSchemaProps = config.getSchema()._cvtProperties; // eslint-disable-line no-underscore-dangle
-
-const log = require('purpleteam-logger').init(config.get('logger'));
-
-// Used quicktype to generate initial schema from buildUserConfig
+// Used quicktype to generate initial schema from job
 const schema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $ref: '#/definitions/BuildUserConfig',
+  $ref: '#/definitions/Job',
   definitions: {
-    BuildUserConfig: {
+    Job: {
       type: 'object',
       additionalProperties: false,
       properties: {
@@ -50,13 +54,13 @@ const schema = {
         'data',
         'included'
       ],
-      title: 'BuildUserConfig'
+      title: 'Job'
     },
     Data: {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string', enum: ['testRun'] },
+        type: { type: 'string', enum: ['job'] },
         attributes: { $ref: '#/definitions/DataAttributes' },
         relationships: { $ref: '#/definitions/Relationships' }
       },
@@ -71,27 +75,17 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        version: { type: 'string', const: config.get('buildUserConfig.version') },
+        version: { type: 'string', get const() { return internals.config.job.version; } },
         sutAuthentication: { $ref: '#/definitions/SutAuthentication' },
-        sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] }, // https://github.com/epoberezkin/ajv/issues/832
+        sutIp: { type: 'string', oneOf: [{ format: 'ipv6' }, { format: 'hostname' }] },
         sutPort: { type: 'integer', minimum: 1, maximum: 65535 },
         sutProtocol: { type: 'string', enum: ['https', 'http'], default: 'https' },
-        browser: { type: 'string', enum: configSchemaProps.sut._cvtProperties.browser.format, default: config.get('sut.browser') }, // eslint-disable-line no-underscore-dangle
-        loggedInIndicator: { type: 'string', minLength: 1 },
-        reportFormats: {
-          type: 'array',
-          items: {
-            type: 'string',
-            enum: configSchemaProps.sut._cvtProperties.reportFormat.format // eslint-disable-line no-underscore-dangle
-          },
-          uniqueItems: true,
-          minItems: 1
-        }
+        browser: { type: 'string', get enum() { return internals.config.sut.browserOptions; }, get default() { return internals.config.sut.defaultBrowser; } },
+        loggedInIndicator: { type: 'string', minLength: 1 }
       },
       required: [
         'browser',
         'loggedInIndicator',
-        'reportFormats',
         'sutAuthentication',
         'sutIp',
         'sutPort',
@@ -138,15 +132,19 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string', enum: ['testSession', 'route'] },
+        type: { type: 'string', enum: ['tlsScanner', 'appScanner', 'route'] },
         id: { type: 'string' }
       },
       required: ['id', 'type'],
-      if: { properties: { type: { enum: ['testSession'] } } },
-      then: { properties: { id: { type: 'string', pattern: '^\\w{1,200}$' } } },
+      if: { properties: { type: { enum: ['tlsScanner'] } } },
+      then: { properties: { id: { type: 'string', pattern: 'NA' } } },
       else: {
-        if: { properties: { type: { enum: ['route'] } } },
-        then: { properties: { id: { type: 'string', pattern: '^/\\w{1,200}$' } } }
+        if: { properties: { type: { enum: ['appScanner'] } } },
+        then: { properties: { id: { type: 'string', pattern: '^\\w{1,200}$' } } },
+        else: {
+          if: { properties: { type: { enum: ['route'] } } },
+          then: { properties: { id: { type: 'string', pattern: '^/\\w{1,200}$' } } }
+        }
       },
       title: 'ResourceLinkage'
     },
@@ -154,7 +152,7 @@ const schema = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        type: { type: 'string', enum: ['testSession', 'route'] },
+        type: { type: 'string', enum: ['tlsScanner', 'appScanner', 'route'] },
         id: { type: 'string' },
         attributes: {},
         relationships: {}
@@ -164,35 +162,55 @@ const schema = {
         'id',
         'type'
       ],
-      // If we want to use flags for regex, etc, then need to use ajv-keywords: https://github.com/epoberezkin/ajv-keywords#regexp
-      if: { properties: { type: { enum: ['testSession'] } } },
+      if: { properties: { type: { enum: ['tlsScanner'] } } },
       then: {
         properties: {
-          id: { type: 'string', pattern: '^\\w{1,200}$' },
-          attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTestSession' },
-          relationships: { $ref: '#/definitions/Relationships' }
-        },
-        required: ['relationships']
+          id: { type: 'string', pattern: 'NA' },
+          attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeTlsScanner' }
+        }
       },
+      // If we want to use flags for regex, etc, then need to use ajv-keywords: https://github.com/epoberezkin/ajv-keywords#regexp
       else: {
-        if: { properties: { type: { enum: ['route'] } } },
+        if: { properties: { type: { enum: ['appScanner'] } } },
         then: {
           properties: {
-            id: { type: 'string', pattern: '^/\\w{1,200}$' },
-            attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
+            id: { type: 'string', pattern: '^\\w{1,200}$' },
+            attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeAppScanner' },
+            relationships: { $ref: '#/definitions/Relationships' }
+          },
+          required: ['relationships']
+        },
+        else: {
+          if: { properties: { type: { enum: ['route'] } } },
+          then: {
+            properties: {
+              id: { type: 'string', pattern: '^/\\w{1,200}$' },
+              attributes: { $ref: '#/definitions/AttributesObjOfTopLevelResourceObjectOfTypeRoute' }
+            }
           }
         }
       },
       title: 'TopLevelResourceObject',
       errorMessage: {
         properties: {
-          type: 'should be one of either testSession or route',
-          id: 'if type is testSession, the id should be a valid testSession, if type is route, the id should be a valid route'
+          type: 'should be one of either tlsScanner, appScanner, or route',
+          id: 'If type is tlsScanner, the id should be NA. If type is appScanner, the id should be a valid appScanner. If type is route, the id should be a valid route.'
         }
       }
     },
 
-    AttributesObjOfTopLevelResourceObjectOfTypeTestSession: {
+    AttributesObjOfTopLevelResourceObjectOfTypeTlsScanner: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        tlsScannerSeverity: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
+        alertThreshold: { type: 'integer', minimum: 0, maximum: 1000 }
+      },
+      required: [],
+      title: 'AttributesObjOfTopLevelResourceObjectOfTypeTlsScanner'
+    },
+
+    AttributesObjOfTopLevelResourceObjectOfTypeAppScanner: {
       type: 'object',
       additionalProperties: false,
       properties: {
@@ -200,10 +218,10 @@ const schema = {
         password: { type: 'string' },
         aScannerAttackStrength: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH', 'INSANE'] },
         aScannerAlertThreshold: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH'] },
-        alertThreshold: { type: 'integer' }
+        alertThreshold: { type: 'integer', minimum: 0, maximum: 1000 }
       },
       required: [],
-      title: 'AttributesObjOfTopLevelResourceObjectOfTypeTestSession'
+      title: 'AttributesObjOfTopLevelResourceObjectOfTypeAppScanner'
     },
 
     AttributesObjOfTopLevelResourceObjectOfTypeRoute: {
@@ -240,7 +258,6 @@ const schema = {
   }
 };
 
-const validate = ajv.compile(schema);
 const convertJsonToObj = (value) => ((typeof value === 'string' || value instanceof String) ? Bourne.parse(value) : value);
 const deltaLogs = (initialConfig, possiblyMutatedConfig) => {
   const deltas = jsdiff.diffJson(convertJsonToObj(initialConfig), convertJsonToObj(possiblyMutatedConfig));
@@ -250,28 +267,35 @@ const deltaLogs = (initialConfig, possiblyMutatedConfig) => {
 };
 
 const logDeltaLogs = (logItems) => {
-  log.notice('As part of the route validation, the following changes were made to the buildUserConfig:');
-  logItems.length ? logItems.forEach((logItem) => { log.notice(logItem, { tags: ['buildUserConfig'] }); }) : log.notice('no changes', { tags: ['buildUserConfig'] });
+  const { log } = internals;
+  logItems.length && log.notice(`During Job validation, the following changes were made to the job:\n${logItems}`, { tags: ['job'] });
 };
 
 // hapi route.options.validate.payload expects no return value if all good, but a value if mutation occurred.
 // eslint-disable-next-line consistent-return
-const validateBuildUserConfig = async (serialisedBuildUserConfig) => {
-  const buildUserConfig = convertJsonToObj(serialisedBuildUserConfig);
+const validateJob = (jobString) => {
+  const { validate } = internals;
+  const job = convertJsonToObj(jobString);
 
   // Todo: Kim C: Will need to test various configs.
-  if (!validate(buildUserConfig)) {
+  if (!validate(job)) {
     const validationError = new Error(JSON.stringify(validate.errors, null, 2));
     validationError.name = 'ValidationError';
     throw validationError;
   }
 
-  const possiblyMutatedSerialisedBuildUserConfig = JSON.stringify(buildUserConfig, null, 2);
-  // Todo: Kim C: Will need to test various configs.
-  const logItems = deltaLogs(serialisedBuildUserConfig, possiblyMutatedSerialisedBuildUserConfig);
+  const possiblyMutatedJobString = JSON.stringify(job, null, 2);
+  const logItems = deltaLogs(jobString, possiblyMutatedJobString);
   logDeltaLogs(logItems);
-  if (logItems.length) return possiblyMutatedSerialisedBuildUserConfig;
+  return logItems.length ? possiblyMutatedJobString : jobString;
 };
 
+const init = ({ loggerConfig, sutConfig, jobConfig }) => {
+  internals.config.sut = sutConfig;
+  internals.config.job = jobConfig;
+  internals.log = purpleteamLogger.init(loggerConfig);
+  internals.validate = ajv.compile(schema);
+  return { validateJob };
+};
 
-module.exports = validateBuildUserConfig;
+module.exports = { init };
