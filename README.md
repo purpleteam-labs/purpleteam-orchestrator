@@ -54,7 +54,7 @@ Using `sse` is one way communications after the initial subscription from the CL
 
 Using `lp` is request-response communications. A request is made and only answered when there are [_Tester_](https://purpleteam-labs.com/doc/definitions/) feedback messages available, or the application specific (rather than AWS Api Gateway) time-out is exceeded.
 
-As soon as the CLI receives a set (one to many) of _Tester_ feedback messages, it makes another request to the _orchestrator_ (if running in `local` env), or API (if running in `cloud` env). Redis pub/sub is used between the _Testers_ and the _orchestrator_ to publish _Tester_ feedback.  
+As soon as the CLI receives a set (one to many) of _Tester_ feedback messages, it makes another request to the _orchestrator_ (Directly if running in `local` env. Indirectly via the AWS API Gateway if running in `cloud` env). Redis pub/sub is used between the _Testers_ and the _orchestrator_ to publish _Tester_ feedback.  
 
 A little more detail:
 
@@ -65,16 +65,7 @@ If running in the `cloud` environment the first set of _Tester_ feedback message
 
 This means that if the CLI is stopped momentarily during a _Test Run_ or if _Tester_ messages pile up before the CLI has subscribed (which normally occurs on receipt of the initial set of _Tester_ status messages), as long as the CLI subscribes before the _Test Run_ has completed, it will receive all stored _Tester_ feedback messages and the _Outcomes_ archive when the _Test Run_ is complete.
 
-
-
-
-
-
-
-
-
-
-
+There are some more details around message flow in [this blog post](https://binarymist.io/blog/2021/09/07/purpleteam-tls-tester-implementation/#message-flows).
 
 > Additional background: This may change in the future, WebSockets is also an option we may implement in the future, but implementing WebSockets would mean we would have to change our entire authn approach. Our chosen cloud infrastructure AWS Api Gateway does not support streaming and it does not support the OAuth Client Credentials Flow with Cognito User Pools.
 
