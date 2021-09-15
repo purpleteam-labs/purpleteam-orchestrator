@@ -24,14 +24,11 @@ const internals = {
   jobTestSessions: []
 };
 
-
 const init = (testerConfig) => {
   if (!internals.testerConfig) internals.testerConfig = testerConfig;
 };
 
-
 const isActive = () => internals.testerConfig.active;
-
 
 async function plan(testJob) {
   const { testerConfig: { name, url, testPlanRoute } } = internals;
@@ -58,7 +55,6 @@ async function plan(testJob) {
   }
 }
 
-
 async function initTester(testJob) {
   const { testerConfig: { name, url, initTesterRoute } } = internals;
 
@@ -78,13 +74,11 @@ async function initTester(testJob) {
   return { name, message: initTesterPayload };
 }
 
-
 function startTester() {
   const { testerConfig: { url, startTesterRoute } } = internals;
   if (!isActive()) return;
   Wreck.post(`${url}${startTesterRoute}`);
 }
-
 
 const setTestSessionFinished = (testSessionId) => {
   const { jobTestSessions } = internals;
@@ -95,9 +89,14 @@ const setTestSessionFinished = (testSessionId) => {
   jobTestSessions.find((tS) => tS.id === testSessionId).isFinished = true;
 };
 
-
 const testerFinished = () => internals.jobTestSessions.every((tS) => tS.isFinished);
 const jobTestSessions = () => internals.jobTestSessions;
+
+const reset = async () => {
+  const { testerConfig: { url, resetTesterRoute } } = internals;
+  internals.jobTestSessions = [];
+  await Wreck.post(`${url}${resetTesterRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: '{}' });
+};
 
 module.exports = {
   init,
@@ -107,5 +106,6 @@ module.exports = {
   startTester,
   setTestSessionFinished,
   testerFinished,
-  jobTestSessions
+  jobTestSessions,
+  reset
 };

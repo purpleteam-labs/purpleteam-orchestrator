@@ -3,26 +3,26 @@
     "level": "debug"  
   },
   "host": {
-    "host": "172.25.0.110"
+    "host": "orchestrator"
   },
   "testers": {
     "app": {
-      "url": "http://172.25.0.120:3000",
+      "url": "http://app-scanner:3000",
       "active": true
     },
     "server": {
-      "url": "http://172.25.0.130:3010",
+      "url": "http://server-scanner:3010",
       "active": false
     },
     "tls": {
-      "url": "http://172.25.0.140:3020",
+      "url": "http://tls-scanner:3020",
       "active": true
     }
   },
-  "outcomes": {
-    "dir": "/var/log/purpleteam/outcomes/"
-  },
   "testerFeedbackComms": {
     "medium": "lp"
+  },
+  "coolDown": {
+    "timeout": 50000
   }
 }

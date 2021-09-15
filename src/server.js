@@ -54,7 +54,8 @@ const plugins = [
       testers: config.get('testers'),
       testerWatcher,
       outcomes: config.get('outcomes'),
-      env: config.get('env')
+      env: config.get('env'),
+      coolDownTimeout: config.get('coolDown.timeout')
     }
   }
 ];

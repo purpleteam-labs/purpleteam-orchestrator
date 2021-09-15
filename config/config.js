@@ -94,7 +94,8 @@ const schema = {
       },
       testPlanRoute: '/test-plan',
       initTesterRoute: '/init-tester',
-      startTesterRoute: '/start-tester'
+      startTesterRoute: '/start-tester',
+      resetTesterRoute: '/reset-tester'
     },
     server: {
       name: 'server',
@@ -110,7 +111,8 @@ const schema = {
       },
       testPlanRoute: '/test-plan',
       initTesterRoute: '/init-tester',
-      startTesterRoute: '/start-tester'
+      startTesterRoute: '/start-tester',
+      resetTesterRoute: '/reset-tester'
     },
     tls: {
       name: 'tls',
@@ -126,7 +128,8 @@ const schema = {
       },
       testPlanRoute: '/test-plan',
       initTesterRoute: '/init-tester',
-      startTesterRoute: '/start-tester'
+      startTesterRoute: '/start-tester',
+      resetTesterRoute: '/reset-tester'
     }
   },
   job: {
@@ -165,6 +168,13 @@ const schema = {
         format: Number,
         default: 20.0
       }
+    }
+  },
+  coolDown: {
+    timeout: {
+      doc: 'The duration in milliseconds between Test Runs before another test command can be initiated. Important to make sure cleanup has occurred before starting another Test Run. In the cloud ECS requires a longer cool-down period before restarting S2 Tasks.',
+      format: 'duration',
+      default: 10000
     }
   }
 };

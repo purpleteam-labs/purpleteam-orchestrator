@@ -78,8 +78,8 @@ module.exports = [{
   path: '/outcomes',
   options: {
     handler: (request, respToolkit) => {
-      const { model: { getOutcomesArchiveFilePath } } = request.server.app;
-      return respToolkit.file(getOutcomesArchiveFilePath(), { confine: false });
+      const { server: { app: { model } } } = request;
+      return respToolkit.file(model.getOutcomesArchiveFilePath(), { confine: false });
     }
   }
 }, {

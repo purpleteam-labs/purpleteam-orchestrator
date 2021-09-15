@@ -17,20 +17,16 @@
 const log = require('purpleteam-logger').get(); // eslint-disable-line no-unused-vars
 const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
 
-
 const internals = {
   testerConfig: null,
   jobTestSessions: []
 };
 
-
 const init = (testerConfig) => {
   if (!internals.testerConfig) internals.testerConfig = testerConfig;
 };
 
-
 const isActive = () => internals.testerConfig.active;
-
 
 async function plan(testJob) { // eslint-disable-line no-unused-vars
   const { testerConfig: { name, url, testPlanRoute } } = internals; // eslint-disable-line no-unused-vars
@@ -39,7 +35,6 @@ async function plan(testJob) { // eslint-disable-line no-unused-vars
 
   throw new Error('Function "plan" of server Tester is not implemented!');
 }
-
 
 async function initTester(testJob) { // eslint-disable-line no-unused-vars
   const { testerConfig: { name, url, initTesterRoute } } = internals; // eslint-disable-line no-unused-vars
@@ -51,7 +46,6 @@ async function initTester(testJob) { // eslint-disable-line no-unused-vars
   throw new Error('Function "initTester" of server Tester is not implemented!');
 }
 
-
 function startTester() {
   const { testerConfig: { url, startTesterRoute } } = internals; // eslint-disable-line no-unused-vars
   if (!isActive()) return;
@@ -59,14 +53,16 @@ function startTester() {
   throw new Error('Function "startTester" of server Tester is not implemented!');
 }
 
-
 const setTestSessionFinished = (testSessionId) => { // eslint-disable-line no-unused-vars
   throw new Error('Function "setTestSessionFinished" of server Tester is not implemented!');
 };
 
-
 const testerFinished = () => { throw new Error('Function "testerFinished" of server Tester is not implemented!'); };
 const jobTestSessions = () => internals.jobTestSessions;
+
+const reset = async () => {
+  throw new Error('Function "reset" of server Tester is not implemented!');
+};
 
 module.exports = {
   init,
@@ -76,5 +72,6 @@ module.exports = {
   startTester,
   setTestSessionFinished,
   testerFinished,
-  jobTestSessions
+  jobTestSessions,
+  reset
 };

@@ -17,8 +17,8 @@
 const Bourne = require('@hapi/bourne');
 
 const Orchestration = {
-  TesterUnavailable: (tester) => `No ${tester} testing available currently. The ${tester} Tester is currently in-active.`,
-  TestPlanUnavailable: (tester) => `No test plan available for the ${tester} Tester. The ${tester} Tester is currently in-active.`,
+  TesterUnavailable: (tester) => `No ${tester} testing available currently. The ${tester} Tester is currently in-active.`, // Should match CLI.
+  TestPlanUnavailable: (tester) => `No test plan available for the ${tester} Tester. The ${tester} Tester is currently in-active.`, // Should match CLI.
   JobMaskPassword: (config) => {
     let configClone;
 
