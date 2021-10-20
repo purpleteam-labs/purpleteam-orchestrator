@@ -103,6 +103,10 @@ class Orchestrate {
     return { dataMap, allTestSessionsOfAllTestersFinished };
   }
 
+  status() {
+    return !this.#initTesterResponsesForCli ? 'orchestrator is ready to take orders.' : 'Test Run is in progress.';
+  }
+
   // Could potentially be exposed as part of the API for CLI to invoke if the back-end gets messed up.
   async resetTesters({ level = 'soft' }) {
     const { cleanUpAfterTestRun: cleanUpTesterWatcherAfterTestRun } = this.#testerWatcher;

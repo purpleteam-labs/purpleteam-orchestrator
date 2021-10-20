@@ -16,6 +16,7 @@
 
 const Boom = require('@hapi/boom'); // eslint-disable-line
 const { validateTesterNameSessionId } = require('src/api/orchestration/schemas/testers');
+const config = require('config/config');
 
 const internals = {
   validateTesterFeedback: {
@@ -85,5 +86,17 @@ module.exports = [{
 }, {
   method: 'GET',
   path: '/status',
-  handler: () => 'orchestrator is up'
+  handler: (request) => {
+    const { server: { app: { model } } } = request;
+    return model.status();
+  }
+}, {
+  // Only to be invoked when Testers are finished.
+  method: 'GET',
+  path: '/reset',
+  handler: async (request) => {
+    const { server: { app: { model } } } = request;
+    await model.resetTesters({ level: 'hard' });
+    return `Reset initiated. Please wait at least ${config.get('coolDown.timeout') / 1000} seconds before starting a Test Run.`;
+  }
 }];

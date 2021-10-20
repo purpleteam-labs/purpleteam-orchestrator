@@ -96,6 +96,7 @@ const reset = async () => {
   const { testerConfig: { url, resetTesterRoute } } = internals;
   internals.jobTestSessions = [];
   await Wreck.post(`${url}${resetTesterRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: '{}' });
+  log.info('Reset command has been sent to Tester.', { tags: ['orchestrate.tls'] });
 };
 
 module.exports = {
