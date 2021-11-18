@@ -135,8 +135,8 @@ const schema = {
   job: {
     version: {
       doc: 'The version of the Job accepted by this API.',
-      format: ['0.1.0-alpha.1', '1.0.0-alpha.3'],
-      default: '1.0.0-alpha.3'
+      format: ['0.1.0-alpha.1', '1.0.0-alpha.3', '2.0.0-alpha.3'],
+      default: '2.0.0-alpha.3'
     }
   },
   outcomes: {
@@ -174,7 +174,7 @@ const schema = {
     timeout: {
       doc: 'The duration in milliseconds between Test Runs before another test command can be initiated. Important to make sure cleanup has occurred before starting another Test Run. In the cloud ECS requires a longer cool-down period before restarting S2 Tasks.',
       format: 'duration',
-      default: 10000
+      default: 15000
     }
   }
 };

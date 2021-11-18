@@ -42,6 +42,9 @@ services:
      - type: bind
        source: ${HOST_DIR}
        target: /var/log/purpleteam/outcomes
+     - type: bind
+       source: ${HOST_DIR_APP_SCANNER}
+       target: /mnt/purpleteam-app-scanner
 
   tls-scanner:
     depends_on:
