@@ -1,6 +1,6 @@
 {
   "name": "purpleteam-orchestrator",
-  "version": "1.0.0-alpha.3",
+  "version": "2.0.0-alpha.3",
   "description": "Orchestrator component of purpleteam -- security regression testing SaaS",
   "main": "index.js",
   "scripts": {
