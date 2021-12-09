@@ -56,14 +56,17 @@ async function plan(testJob) {
 }
 
 async function initTester(testJob) {
-  const { testerConfig: { name, url, initTesterRoute } } = internals;
+  const { testerConfig: { name, url, initTesterRoute, minNum, maxNum } } = internals;
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
   const hydratedTestJob = Bourne.parse(testJob);
-  const validNumberOfResourceObjects = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'tlsScanner').length === 1;
+  const validNumberOfResourceObjects = (() => {
+    const numberOfTlsScannerResourceObjects = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'tlsScanner').length;
+    return numberOfTlsScannerResourceObjects >= minNum && numberOfTlsScannerResourceObjects <= maxNum;
+  })();
 
-  if (!validNumberOfResourceObjects) return { name, message: 'Tester failure: The only valid number of tlsScanner resource objects is one. Please modify your Job file.' };
+  if (!validNumberOfResourceObjects) return { name, message: `Tester failure: The only valid number of tlsScanner resource objects is${minNum === maxNum ? `: "${minNum}"` : ` from: "${minNum}-${maxNum}"`}. Please modify your Job file.` };
   internals.jobTestSessions = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'tlsScanner').map((testSessionResourceObj) => ({ id: testSessionResourceObj.id, isFinished: false }));
 
   const { res, payload } = await Wreck.post(`${url}${initTesterRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob }); // eslint-disable-line no-unused-vars

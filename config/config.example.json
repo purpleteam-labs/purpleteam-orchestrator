@@ -23,6 +23,6 @@
     "medium": "lp"
   },
   "coolDown": {
-    "timeout": 50000
+    "timeout": 100000
   }
 }

@@ -37,7 +37,7 @@ async function plan(testJob) { // eslint-disable-line no-unused-vars
 }
 
 async function initTester(testJob) { // eslint-disable-line no-unused-vars
-  const { testerConfig: { name, url, initTesterRoute } } = internals; // eslint-disable-line no-unused-vars
+  const { testerConfig: { name, url, initTesterRoute, minNum, maxNum } } = internals; // eslint-disable-line no-unused-vars
 
   internals.jobTestSessions = [{ id: 'NA' }];
 

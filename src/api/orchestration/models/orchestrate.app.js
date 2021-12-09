@@ -56,17 +56,17 @@ async function plan(testJob) {
 }
 
 async function initTester(testJob) {
-  const { testerConfig: { name, url, initTesterRoute } } = internals;
+  const { testerConfig: { name, url, initTesterRoute, minNum, maxNum } } = internals;
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
   const hydratedTestJob = Bourne.parse(testJob);
   const validNumberOfResourceObjects = (() => {
     const numberOfAppScannerResourceObjects = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'appScanner').length;
-    return numberOfAppScannerResourceObjects > 0 && numberOfAppScannerResourceObjects <= 12;
+    return numberOfAppScannerResourceObjects >= minNum && numberOfAppScannerResourceObjects <= maxNum;
   })();
 
-  if (!validNumberOfResourceObjects) return { name, message: 'Tester failure: The only valid number of appScanner resource objects is from 1-12 inclusive. Please modify your Job file.' };
+  if (!validNumberOfResourceObjects) return { name, message: `Tester failure: The only valid number of appScanner resource objects is from: "${minNum}-${maxNum}" inclusive. Please modify your Job file.` };
   internals.jobTestSessions = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'appScanner').map((testSessionResourceObj) => ({ id: testSessionResourceObj.id, isFinished: false }));
 
   const { res, payload } = await Wreck.post(`${url}${initTesterRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: testJob }); // eslint-disable-line no-unused-vars

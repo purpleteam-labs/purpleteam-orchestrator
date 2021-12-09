@@ -95,7 +95,17 @@ const schema = {
       testPlanRoute: '/test-plan',
       initTesterRoute: '/init-tester',
       startTesterRoute: '/start-tester',
-      resetTesterRoute: '/reset-tester'
+      resetTesterRoute: '/reset-tester',
+      minNum: {
+        doc: 'The minimum number of supported App Testers.',
+        format: Number,
+        default: 1
+      },
+      maxNum: {
+        doc: 'The maximum number of supported App Testers.',
+        format: Number,
+        default: 12
+      }
     },
     server: {
       name: 'server',
@@ -112,7 +122,17 @@ const schema = {
       testPlanRoute: '/test-plan',
       initTesterRoute: '/init-tester',
       startTesterRoute: '/start-tester',
-      resetTesterRoute: '/reset-tester'
+      resetTesterRoute: '/reset-tester',
+      minNum: {
+        doc: 'The minimum number of supported Server Testers.',
+        format: Number,
+        default: 1
+      },
+      maxNum: {
+        doc: 'The maximum number of supported Server Testers.',
+        format: Number,
+        default: 1
+      }
     },
     tls: {
       name: 'tls',
@@ -129,7 +149,17 @@ const schema = {
       testPlanRoute: '/test-plan',
       initTesterRoute: '/init-tester',
       startTesterRoute: '/start-tester',
-      resetTesterRoute: '/reset-tester'
+      resetTesterRoute: '/reset-tester',
+      minNum: {
+        doc: 'The minimum number of supported Tls Testers.',
+        format: Number,
+        default: 1
+      },
+      maxNum: {
+        doc: 'The maximum number of supported Tls Testers.',
+        format: Number,
+        default: 1
+      }
     }
   },
   job: {
