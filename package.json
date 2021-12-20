@@ -80,7 +80,7 @@
     "zap"
   ],
   "author": "Kim Carter",
-  "license": "AGPL-3.0-only",
+  "license": "BSL",
   "bugs": {
     "url": "https://github.com/purpleteam-labs/purpleteam/issues"
   },
@@ -128,6 +128,8 @@
     "compose/orchestrator-testers-compose.debug_orchestrator.yml",
     "config/config.js",
     "config/config.example.json",
-    "src"
+    "src",
+    "LEGALNOTICE.md",
+    "licenses"
   ]
 }
