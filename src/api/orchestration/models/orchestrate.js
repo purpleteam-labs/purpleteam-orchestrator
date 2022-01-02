@@ -54,7 +54,7 @@ class Orchestrate {
     // For a lib based and richer solution: https://github.com/archiverjs/node-archiver
     const { compressionLvl, fileName, dir } = this.#outcomesConfig;
     this.#log.info(`About to write outcomes file "${fileName}" to dir "${dir}"`, { tags: ['orchestrate'] });
-    exec(`zip ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
+    exec(`zip -r ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
       if (error) {
         this.#log.error(`Error occurred archiving the outcomes: ${error}.`, { tags: ['orchestrate'] });
         return;
@@ -148,15 +148,11 @@ class Orchestrate {
   }
 
   async #clearOutcomesDir() {
-    // const promiseToChmod = promisify(fs.chmod);
     const { dir } = this.#outcomesConfig;
-
     try {
       const fileNames = await fsPromises.readdir(dir);
       if (fileNames.length) {
-        // const chmodPromises = fileNames.map(async (name) => promiseToChmod(name, Oo300));
-        // await Promise.all(chmodPromises);
-        const unlinkPromises = fileNames.map(async (name) => fsPromises.unlink(`${dir}${name}`));
+        const unlinkPromises = fileNames.map(async (name) => fsPromises.rm(`${dir}${name}`, { recursive: true }));
         await Promise.all(unlinkPromises);
       }
     } catch (e) { // This may fail if the group permissions on the outcomes dir does not have wx.
