@@ -50,18 +50,16 @@ class Orchestrate {
     this.#testerModels.forEach((tM) => tM.init(this.#testersConfig[tM.name]));
   }
 
-  #archiveOutcomes() {
+  async #archiveOutcomes() {
     // For a lib based and richer solution: https://github.com/archiverjs/node-archiver
     const { compressionLvl, fileName, dir } = this.#outcomesConfig;
     this.#log.info(`About to write outcomes file "${fileName}" to dir "${dir}"`, { tags: ['orchestrate'] });
-    exec(`zip -r ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
-      if (error) {
-        this.#log.error(`Error occurred archiving the outcomes: ${error}.`, { tags: ['orchestrate'] });
-        return;
-      }
-
-      !!stdout && this.#log.info(`Archiving the outcomes, stdout:\n${stdout}`, { tags: ['orchestrate'] });
-      !!stderr && this.#log.info(`Archiving the outcomes, stderr:\n${stderr}`, { tags: ['orchestrate'] });
+    return new Promise((resolve, reject) => {
+      exec(`zip -r ${compressionLvl} ${fileName} *`, { cwd: dir }, (error, stdout, stderr) => {
+        if (error) reject(new Error(`Error occurred archiving the outcomes. The error was: ${error}.`));
+        if (stderr) reject(new Error(`Archiving the outcomes, stderr:\n${stderr}`));
+        resolve(`Archiving the outcomes, stdout:\n${stdout}`);
+      });
     });
   }
 
@@ -118,13 +116,19 @@ class Orchestrate {
     }, this.#coolDownTimeout);
   }
 
-  #sseTesterWatcherCallback(chan, message, respToolkit) {
+  async #sseTesterWatcherCallback(chan, message, respToolkit) {
     const response = respToolkit.response(message);
     const update = Bourne.parse(response.source);
     const { dataMap, allTestSessionsOfAllTestersFinished } = this.#processTesterFeedbackMessageForCli({ update, chan });
     if (allTestSessionsOfAllTestersFinished) {
       this.resetTesters({});
-      this.#archiveOutcomes();
+      await this.#archiveOutcomes()
+        .then((result) => {
+          this.#log.info(result, { tags: ['orchestrate'] });
+        })
+        .catch((err) => {
+          this.#log.error(err, { tags: ['orchestrate'] });
+        });
     }
     respToolkit.event({ id: update.timestamp, event: update.event, data: dataMap });
     // Close event stream if all Testers finished. null makes stream emit it's `end` event.
@@ -132,7 +136,7 @@ class Orchestrate {
     // Now we just close from client side, so client doesn't keep trying to re-establish.
   }
 
-  #lpTesterWatcherCallback(chan, message) {
+  async #lpTesterWatcherCallback(chan, message) {
     // We use event 'testerMessage' when the Redis client returns a nil multi-bulk (The event type is arbitrary if there was no message) and 'testerMessage' is the easiest to handle in the CLI.
     //   This is what happens when we blpop (blocking lpop) and it times out waiting for a message to be available on the given list.
     //   So there is actually no message published from any Tester.
@@ -141,7 +145,13 @@ class Orchestrate {
     const { dataMap, allTestSessionsOfAllTestersFinished } = this.#processTesterFeedbackMessageForCli({ update, chan });
     if (allTestSessionsOfAllTestersFinished) {
       this.resetTesters({});
-      this.#archiveOutcomes();
+      await this.#archiveOutcomes()
+        .then((result) => {
+          this.#log.info(result, { tags: ['orchestrate'] });
+        })
+        .catch((err) => {
+          this.#log.error(err, { tags: ['orchestrate'] });
+        });
     }
     update.data = dataMap;
     return update;
@@ -265,7 +275,7 @@ class Orchestrate {
   }
 
   async #getTesterMessages(channel) {
-    const testerWatcherCallbackClosure = (chan, message) => this.#lpTesterWatcherCallback(chan, message);
+    const testerWatcherCallbackClosure = async (chan, message) => this.#lpTesterWatcherCallback(chan, message);
     const testerMessageSet = await this.#testerWatcher.pollTesterMessages(channel, testerWatcherCallbackClosure);
     return testerMessageSet;
   }

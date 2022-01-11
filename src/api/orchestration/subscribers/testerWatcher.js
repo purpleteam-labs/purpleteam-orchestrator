@@ -76,7 +76,11 @@ const pollTesterMessages = async (redisChannel, callback) => {
   //   then return the CLI ready set of messages.
   const testerMessageSet = await getTesterMessages(redisList);
 
-  const cliAfiedTesterMessageSet = testerMessageSet.map((tM) => callback(redisChannel, tM));
+  const cliAfiedTesterMessageSet = await testerMessageSet.reduce(async (accum, tM) => {
+    const results = await accum;
+    return [...results, await callback(redisChannel, tM)];
+  }, []);
+
   return cliAfiedTesterMessageSet;
 };
 
