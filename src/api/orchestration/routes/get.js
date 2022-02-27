@@ -32,14 +32,14 @@ export default [{
   path: '/tester-feedback/{testerName}/{sessionId}',
   options: {
     validate: internals.validateTesterFeedback,
-    handler: (request, respToolkit) => { // eslint-disable-line no-unused-vars
+    handler: async (request, respToolkit) => { // eslint-disable-line no-unused-vars
       const { server: { app: { model } }, params: { testerName, sessionId } } = request;
       const channel = `${testerName}${sessionId ? `-${sessionId}` : ''}`; // We get 'NA' sent from the CLI for Tls and Server
       const event = 'testerProgress';
 
       let response;
       try {
-        response = model.initSSE(channel, event, respToolkit);
+        response = await model.initSSE(channel, event, respToolkit);
       } catch (e) {
         // Errors with statusCode 500 have their messages hidden from the end user: https://hapi.dev/module/boom/api/?v=9.1.0#http-5xx-errors
         throw Boom.boomify(e, { statusCode: e.statusCode || 500 });

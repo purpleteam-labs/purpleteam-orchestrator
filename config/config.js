@@ -60,8 +60,7 @@ const schema = {
       doc: 'The options used for creating the redis client.',
       format: (val) => typeof val === 'object',
       default: {
-        port: 6379,
-        host: 'redis'
+        socket: { host: 'redis', port: 6379 }
         // "host": "172.17.0.2" // host networking or not running in container
       }
     }

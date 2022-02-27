@@ -7,7 +7,6 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-import { promisify } from 'util';
 import redis from 'redis';
 
 let log;
@@ -21,39 +20,49 @@ let nonBlockingClients = {};
 //   So we use client instances that will be used for blocking commands only.
 let blockingClients = {};
 
-const subscribe = (redisChannel, callback) => {
+const subscribe = async (redisChannel, callback) => {
   subscribeClients[redisChannel] = redis.createClient(redisOptions);
-  subscribeClients[redisChannel].subscribe(redisChannel);
-
   subscribeClients[redisChannel].on('error', (error) => {
     log.error(`Redis error: ${error}`, { tags: ['testerWatcher'] });
   });
+  await subscribeClients[redisChannel].connect()
+    .then(() => {
+      log.info(`A connection is established for subscribeClients[redisChannel: ${redisChannel}] to redis at "${redisOptions.socket.host}:${redisOptions.socket.port}".`, { tags: ['testerWatcher'] });
+    })
+    .catch((e) => {
+      log.error(`An error occurred for subscribeClients[redisChannel: ${redisChannel}] while trying to connect. The error was: "${e.message}".`, { tags: ['testerWatcher'] });
+    });
   log.info(`About to subscribe ${redisChannel} redis client to channel: ${redisChannel}`, { tags: ['testerWatcher'] });
-  subscribeClients[redisChannel].on('message', callback);
+  await subscribeClients[redisChannel].subscribe(redisChannel, callback)
+    .catch((error) => {
+      log.error(`Redis error: ${error}`, { tags: ['testerWatcher'] });
+    });
 };
 
 const getTesterMessages = async (redisList) => {
   // If list has > 0 items, we want to return as many as there are now.
   // If list has 0 items, we want to wait until it has at least one item, then return it.
-  const llen = promisify(nonBlockingClients[redisList].llen).bind(nonBlockingClients[redisList]);
-  const lpop = promisify(nonBlockingClients[redisList].lpop).bind(nonBlockingClients[redisList]);
-  const blpop = promisify(blockingClients[redisList].blpop).bind(blockingClients[redisList]);
-  const curListLen = await llen(redisList).catch((e) => { log.error(`Error occurred while attempting to get list length of list "${redisList}". Error was: ${e}`, { tags: ['testerWatcher'] }); });
+  const lLen = nonBlockingClients[redisList].lLen.bind(nonBlockingClients[redisList]);
+  const lPop = nonBlockingClients[redisList].lPop.bind(nonBlockingClients[redisList]);
+  const blPop = blockingClients[redisList].blPop.bind(blockingClients[redisList]);
+  const curListLen = await lLen(redisList).catch((e) => {
+    log.error(`Error occurred while attempting to get list length of list "${redisList}". Error was: ${e}`, { tags: ['testerWatcher'] });
+  });
   let testerMessageSet = [];
   if (curListLen > 0) {
     const testerMessageSetOfPromises = [];
     const handleLpopError = (e) => { log.error(`Error occurred while attempting to lpop list "${redisList}". Error was: ${e}`, { tags: ['testerWatcher'] }); };
     for (let i = 0; i < curListLen; i += 1) {
-      testerMessageSetOfPromises.push(lpop(redisList).catch(handleLpopError));
+      testerMessageSetOfPromises.push(lPop(redisList).catch(handleLpopError));
     }
     testerMessageSet = await Promise.all(testerMessageSetOfPromises).catch((e) => { log.error(`Error occurred while attempting to resolve testerMessageSetOfPromises lpop'ed from list "${redisList}". Error was: ${e}`, { tags: ['testerWatcher'] }); });
   } else { // Wait...
     // blpop's resolved promise could be one of two things (https://redis.io/commands/blpop#return-value):
-    // 1. If it times out: An array with one element being null.
-    // 2. If a value becomes available: An array with two elements. First being the key name of the list. Second being the value lpoped (popped from the head) from the list.
+    // 1. If it times out: null.
+    // 2. If a value becomes available: An object with two properties. First being the key name of the list. Second being the value lpoped (popped from the head) from the list.
     // After cleanUpAfterTestRun has been executed, the clients will no longer exist, so calls to blpop will resolve to just null.
-    const multiBulk = await blpop(redisList, longPollTimeout).catch((e) => { log.error(`Error occurred while attempting to blpop list "${redisList}". Error was: ${e}`, { tags: ['testerWatcher'] }); });
-    testerMessageSet.push((multiBulk && multiBulk[0] !== null) /* must be the name of the key where an element was popped (I.E. the name of our channel and list) */ ? multiBulk[1] : null);
+    const multiBulk = await blPop(redisList, longPollTimeout).catch((e) => { log.error(`Error occurred while attempting to blPop list "${redisList}". Error was: ${e}`, { tags: ['testerWatcher'] }); });
+    testerMessageSet.push((multiBulk && multiBulk.key === redisList) /* must be the name of the key where an element was popped (I.E. the name of our channel and list) */ ? multiBulk.element : null);
   }
   return testerMessageSet;
 };
@@ -63,10 +72,27 @@ const pollTesterMessages = async (redisChannel, callback) => {
   // Only do the subscription once for each channel.
   if (!subscribeClients[redisChannel]) {
     nonBlockingClients[redisList] = redis.createClient(redisOptions);
+    await nonBlockingClients[redisList].connect()
+      .then(() => {
+        log.info(`A connection is established for nonBlockingClients[redisList: ${redisList}] to redis at "${redisOptions.socket.host}:${redisOptions.socket.port}".`, { tags: ['testerWatcher'] });
+      })
+      .catch((e) => {
+        log.error(`An error occurred for nonBlockingClients[redisList: ${redisList}] while trying to connect. The error was: "${e.message}".`, { tags: ['testerWatcher'] });
+      });
     blockingClients[redisList] = redis.createClient(redisOptions);
-    subscribe(redisChannel, (channel, message) => {
+    await blockingClients[redisList].connect()
+      .then(() => {
+        log.info(`A connection is established for blockingClients[redisList: ${redisList}] to redis at "${redisOptions.socket.host}:${redisOptions.socket.port}".`, { tags: ['testerWatcher'] });
+      })
+      .catch((e) => {
+        log.error(`An error occurred for blockingClients[redisList: ${redisList}] while trying to connect. The error was: "${e.message}".`, { tags: ['testerWatcher'] });
+      });
+    await subscribe(redisChannel, async (message, channel) => {
       // Push message to list with same name as channel.
-      nonBlockingClients[channel].rpush(redisList, message);
+      await nonBlockingClients[channel].rPush(redisList, message);
+      // const itemsJustPushed = await nonBlockingClients[channel].lRange(redisList, 0, 200);
+      // console.log(`channel: ${channel}`);
+      // itemsJustPushed.forEach((i) => console.log(i));
     });
   }
 
@@ -78,7 +104,7 @@ const pollTesterMessages = async (redisChannel, callback) => {
 
   const cliAfiedTesterMessageSet = await testerMessageSet.reduce(async (accum, tM) => {
     const results = await accum;
-    return [...results, await callback(redisChannel, tM)];
+    return [...results, await callback(tM, redisChannel)];
   }, []);
 
   return cliAfiedTesterMessageSet;
@@ -92,6 +118,7 @@ const cleanUpAfterTestRun = () => {
   subscribeClients = {};
   nonBlockingClients = {};
   blockingClients = {};
+  log.info('Redis clients have been cleaned up.', { tags: ['testerWatcher'] });
 };
 
 const serverStart = (options) => {

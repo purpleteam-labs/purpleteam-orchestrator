@@ -102,7 +102,7 @@
     "diff": "^5.0.0",
     "joi": "^17.6.0",
     "purpleteam-logger": "^2.0.0",
-    "redis": "^3.1.2",
+    "redis": "^4.1.0",
     "susie": "^3.0.0"
   },
   "//Install ajv --save-dev": "gets rid of npm warning.",

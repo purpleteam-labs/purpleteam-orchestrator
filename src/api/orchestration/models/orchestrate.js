@@ -120,7 +120,7 @@ class Orchestrate {
     }, this.#coolDownTimeout);
   }
 
-  async #sseTesterWatcherCallback(chan, message, respToolkit) {
+  async #sseTesterWatcherCallback(message, chan, respToolkit) {
     const response = respToolkit.response(message);
     const update = Bourne.parse(response.source);
     const { dataMap, allTestSessionsOfAllTestersFinished } = this.#processTesterFeedbackMessageForCli({ update, chan });
@@ -140,7 +140,7 @@ class Orchestrate {
     // Now we just close from client side, so client doesn't keep trying to re-establish.
   }
 
-  async #lpTesterWatcherCallback(chan, message) {
+  async #lpTesterWatcherCallback(message, chan) {
     // We use event 'testerMessage' when the Redis client returns a nil multi-bulk (The event type is arbitrary if there was no message) and 'testerMessage' is the easiest to handle in the CLI.
     //   This is what happens when we blpop (blocking lpop) and it times out waiting for a message to be available on the given list.
     //   So there is actually no message published from any Tester.
@@ -266,12 +266,12 @@ class Orchestrate {
     };
   }
 
-  initSSE(channel, event, respToolkit) {
-    const testerWatcherCallbackClosure = (chan, message) => {
-      this.#sseTesterWatcherCallback(chan, message, respToolkit);
+  async initSSE(channel, event, respToolkit) {
+    const testerWatcherCallbackClosure = (message, chan) => {
+      this.#sseTesterWatcherCallback(message, chan, respToolkit);
     };
 
-    this.#testerWatcher.subscribe(channel, testerWatcherCallbackClosure);
+    await this.#testerWatcher.subscribe(channel, testerWatcherCallbackClosure);
     const initialEvent = { id: Date.now(), event, data: { progress: `Initialising SSE subscription to "${channel}" channel for the event "${event}".` } };
     const initialResponse = respToolkit.event(initialEvent);
     return initialResponse;
@@ -281,7 +281,7 @@ class Orchestrate {
   }
 
   async #getTesterMessages(channel) {
-    const testerWatcherCallbackClosure = async (chan, message) => this.#lpTesterWatcherCallback(chan, message);
+    const testerWatcherCallbackClosure = async (message, chan) => this.#lpTesterWatcherCallback(message, chan);
     const testerMessageSet = await this.#testerWatcher.pollTesterMessages(channel, testerWatcherCallbackClosure);
     return testerMessageSet;
   }
