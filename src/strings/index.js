@@ -22,7 +22,7 @@ const Orchestration = {
         return 'JSON parsing failed. Job was invalid JSON.';
       }
     } else {
-      configClone = config;
+      configClone = structuredClone(config); // Requires Node 17. If this fails, the schema will need tweaking.
     }
 
     try {

@@ -53,7 +53,7 @@ async function initTester(testJob) {
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
-  const hydratedTestJob = Bourne.parse(testJob);
+  const hydratedTestJob = typeof testJob !== 'string' ? testJob : Bourne.parse(testJob);
   const validNumberOfResourceObjects = (() => {
     const numberOfTlsScannerResourceObjects = hydratedTestJob.included.filter((resourceObj) => resourceObj.type === 'tlsScanner').length;
     return numberOfTlsScannerResourceObjects >= minNum && numberOfTlsScannerResourceObjects <= maxNum;
