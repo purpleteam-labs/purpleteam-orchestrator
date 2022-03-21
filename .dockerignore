@@ -1,0 +1,8 @@
+.git/
+.github/
+.gitignore
+.husky/
+.vscode/
+vscode-workspaces/
+.eslint*
+

@@ -7,10 +7,13 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const log = require('purpleteam-logger').get(); // eslint-disable-line no-unused-vars
-const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
+import { get as getLogger } from 'purpleteam-logger';
+import { Orchestration } from '../../../strings/index.js';
+
+const { TesterUnavailable, TestPlanUnavailable } = Orchestration;
 
 const internals = {
+  log: getLogger(),
   testerConfig: null,
   jobTestSessions: []
 };
@@ -57,7 +60,7 @@ const reset = async () => {
   throw new Error('Function "reset" of server Tester is not implemented!');
 };
 
-module.exports = {
+export {
   init,
   isActive,
   plan,

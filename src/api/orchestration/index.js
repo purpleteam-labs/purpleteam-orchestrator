@@ -7,15 +7,17 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const { Orchestrate } = require('./models');
-const routes = require('./routes');
+import models from './models/index.js';
+import routes from './routes/index.js';
+
+const { Orchestrate } = models;
 
 const applyRoutes = (server) => {
   // Plugin with multiple routes.
   server.route(routes);
 };
 
-module.exports = {
+export default {
   name: 'orchestrationDomainPlugin',
   version: '1.0.0',
   register: async (server, options) => {
@@ -25,3 +27,4 @@ module.exports = {
   }
 
 };
+

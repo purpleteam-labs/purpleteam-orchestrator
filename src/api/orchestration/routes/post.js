@@ -7,9 +7,12 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const Boom = require('@hapi/boom'); // eslint-disable-line import/no-extraneous-dependencies
-const { Orchestration: { JobMaskPassword } } = require('src/strings');
-const config = require('config/config');
+import Boom from '@hapi/boom';
+import { Orchestration } from '../../../strings/index.js';
+import config from '../../../../config/config.js';
+import initJobSchema from '../schemas/job.js';
+
+const { JobMaskPassword } = Orchestration;
 
 const sutConfig = config.getSchema()._cvtProperties.sut; // eslint-disable-line no-underscore-dangle
 const jobSchemaOpts = {
@@ -21,7 +24,7 @@ const jobSchemaOpts = {
   jobConfig: config.get('job')
 };
 
-const { validateJob } = require('src/api/orchestration/schemas/job').init(jobSchemaOpts);
+const { validateJob } = initJobSchema(jobSchemaOpts);
 
 const internals = {
   validate: {
@@ -40,7 +43,7 @@ const internals = {
 };
 
 
-module.exports = [{
+export default [{
   method: 'POST',
   path: '/testplan',
   options: {

@@ -7,12 +7,15 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const log = require('purpleteam-logger').get();
-const Wreck = require('@hapi/wreck');
-const Bourne = require('@hapi/bourne');
-const { Orchestration: { TesterUnavailable, TestPlanUnavailable } } = require('src/strings');
+import { get as getLogger } from 'purpleteam-logger';
+import Wreck from '@hapi/wreck';
+import Bourne from '@hapi/bourne';
+import { Orchestration } from '../../../strings/index.js';
+
+const { TesterUnavailable, TestPlanUnavailable } = Orchestration;
 
 const internals = {
+  log: getLogger(),
   testerConfig: null,
   jobTestSessions: []
 };
@@ -24,7 +27,7 @@ const init = (testerConfig) => {
 const isActive = () => internals.testerConfig.active;
 
 async function plan(testJob) {
-  const { testerConfig: { name, url, testPlanRoute } } = internals;
+  const { log, testerConfig: { name, url, testPlanRoute } } = internals;
 
   if (!isActive()) return { name, message: TestPlanUnavailable(name) };
 
@@ -49,7 +52,7 @@ async function plan(testJob) {
 }
 
 async function initTester(testJob) {
-  const { testerConfig: { name, url, initTesterRoute, minNum, maxNum } } = internals;
+  const { log, testerConfig: { name, url, initTesterRoute, minNum, maxNum } } = internals;
 
   if (!isActive()) return { name, message: TesterUnavailable(name) };
 
@@ -89,13 +92,13 @@ const testerFinished = () => internals.jobTestSessions.every((tS) => tS.isFinish
 const jobTestSessions = () => internals.jobTestSessions;
 
 const reset = async () => {
-  const { testerConfig: { url, resetTesterRoute } } = internals;
+  const { log, testerConfig: { url, resetTesterRoute } } = internals;
   internals.jobTestSessions = [];
   await Wreck.post(`${url}${resetTesterRoute}`, { headers: { 'content-type': 'application/vnd.api+json' }, payload: '{}' });
   log.info('Reset command has been sent to Tester.', { tags: ['orchestrate.tls'] });
 };
 
-module.exports = {
+export {
   init,
   isActive,
   plan,

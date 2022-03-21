@@ -7,8 +7,8 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const { promisify } = require('util');
-const redis = require('redis');
+import { promisify } from 'util';
+import redis from 'redis';
 
 let log;
 let redisOptions;
@@ -104,7 +104,7 @@ const serverStart = (options) => {
 };
 
 
-module.exports = {
+export {
   subscribe,
   pollTesterMessages,
   cleanUpAfterTestRun,

@@ -7,12 +7,14 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const { exec } = require('child_process');
-const { promises: fsPromises } = require('fs');
+import { exec } from 'child_process';
+import { promises as fsPromises } from 'fs';
+import Bourne from '@hapi/bourne';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { Orchestration } from '../../../strings/index.js';
 
-const Bourne = require('@hapi/bourne');
-
-const { Orchestration: { JobMaskPassword } } = require('src/strings');
+const { JobMaskPassword } = Orchestration;
 
 class Orchestrate {
   #log;
@@ -42,9 +44,11 @@ class Orchestrate {
   async #initialiseModels() {
     await (async () => {
       const modelNameParts = { domain: 0, testerType: 1, fileExtension: 2 };
-      const modelFileNames = await fsPromises.readdir(__dirname);
+      const filename = fileURLToPath(import.meta.url);
+      const currentDirName = dirname(filename);
+      const modelFileNames = await fsPromises.readdir(currentDirName);
       const subModelFileNames = modelFileNames.filter((fileName) => fileName === 'index.js' ? false : !(fileName.startsWith('.js', 11))); // eslint-disable-line no-confusing-arrow
-      this.#testerModels = subModelFileNames.map(fileName => ({ ...require(`./${fileName}`), name: fileName.split('.')[modelNameParts.testerType] })); // eslint-disable-line
+      this.#testerModels = await Promise.all(subModelFileNames.map(async (fileName) => ({ ...(await import(`./${fileName}`)), name: fileName.split('.')[modelNameParts.testerType] })));
     })();
 
     this.#testerModels.forEach((tM) => tM.init(this.#testersConfig[tM.name]));
@@ -232,10 +236,12 @@ class Orchestrate {
     }
     if (this.#initTesterResponsesForCli) {
       this.#log.debug('Causing a client-side timeout, to initiate retry.', { tags: ['orchestrate'] });
-      /* Cause a timeout so client retries */ return (() => new Promise((resolve) => setTimeout(() => {
-        this.#log.debug('Finished waiting to cause client-side timeout.', { tags: ['orchestrate'] });
-        resolve();
-      }, /* Api Gateway timeout */ 30000)))();
+      /* Cause a timeout so client retries */ return (() => new Promise((resolve) => {
+        setTimeout(() => {
+          this.#log.debug('Finished waiting to cause client-side timeout.', { tags: ['orchestrate'] });
+          resolve();
+        }, /* Api Gateway timeout */ 30000);
+      }))();
     }
 
     this.#initTesterResponsesForCli = [];
@@ -297,4 +303,4 @@ class Orchestrate {
   }
 }
 
-module.exports = Orchestrate;
+export default Orchestrate;

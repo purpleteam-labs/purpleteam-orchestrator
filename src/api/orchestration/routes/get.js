@@ -7,9 +7,9 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const Boom = require('@hapi/boom'); // eslint-disable-line
-const { validateTesterNameSessionId } = require('src/api/orchestration/schemas/testers');
-const config = require('config/config');
+import Boom from '@hapi/boom';
+import validateTesterNameSessionId from '../schemas/testers.js';
+import config from '../../../../config/config.js';
 
 const internals = {
   validateTesterFeedback: {
@@ -27,7 +27,7 @@ const internals = {
   }
 };
 
-module.exports = [{
+export default [{
   method: 'GET',
   path: '/tester-feedback/{testerName}/{sessionId}',
   options: {

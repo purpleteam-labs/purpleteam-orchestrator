@@ -7,8 +7,8 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const Joi = require('joi');
-const config = require('config/config');
+import Joi from 'joi';
+import config from '../../../../config/config.js';
 
 const testers = Object.keys(config.getProperties().testers);
 
@@ -26,4 +26,6 @@ const validateTesterNameSessionId = (params) => {
   }
   return value;
 };
-module.exports = { validateTesterNameSessionId };
+
+export default validateTesterNameSessionId;
+

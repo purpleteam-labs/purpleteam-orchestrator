@@ -7,18 +7,20 @@
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0
 
-const Hapi = require('@hapi/hapi');
-const hapiJsonApi = require('@gar/hapi-json-api');
-const susie = require('susie');
-const Inert = require('@hapi/inert');
-const config = require('config/config');
-const { hapiEventHandler } = require('src/plugins/');
-const orchestration = require('src/api/orchestration');
+import Hapi from '@hapi/hapi';
+import hapiJsonApi from '@gar/hapi-json-api';
+import susie from 'susie';
+import Inert from '@hapi/inert';
+import { init as initPtLogger } from 'purpleteam-logger';
+import config from '../config/config.js';
+import { hapiEventHandler } from './plugins/index.js';
+import orchestration from './api/orchestration/index.js';
+import { serverStart } from './api/orchestration/subscribers/testerWatcher.js';
 
+const log = initPtLogger(config.get('logger'));
 const server = Hapi.server({ port: config.get('host.port'), host: config.get('host.host') });
-const log = require('purpleteam-logger').init(config.get('logger'));
 
-const testerWatcher = require('src/api/orchestration/subscribers/testerWatcher').serverStart({
+const testerWatcher = serverStart({
   log,
   redis: config.get('redis.clientCreationOptions'),
   testerFeedbackCommsMedium: config.get('testerFeedbackComms.medium'),
@@ -53,12 +55,10 @@ const plugins = [
   }
 ];
 
-module.exports = {
-
+export default {
   registerPlugins: async () => {
     // Todo: KC: Add host header as `vhost` to the routes of the optional options object passed to `server.register`.
     // https://hapijs.com/tutorials/plugins#user-content-registration-options
-
     await server.register(plugins);
     log.info('Server registered.', { tags: ['startup'] });
   },
@@ -67,5 +67,4 @@ module.exports = {
     log.info('Server started.', { tags: ['startup'] });
     return server;
   }
-
 };
