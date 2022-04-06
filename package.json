@@ -33,6 +33,7 @@
     "dc-up-debug-tls": "npm run dc-orchestrator-testers -- -f ./compose/orchestrator-testers-compose.debug_tls-scanner.yml up",
     "// Full system run": "dc-build, dc-up, dc-down",
     "dc-build": "npm run dc-orchestrator-testers build",
+    "dc-build-no-cache": "npm run dc-orchestrator-testers build -- --no-cache",
     "dc-up": "npm run dc-orchestrator-testers up",
     "dc-down": "npm run dc-orchestrator-testers down",
     "//": "Containers must be up before running exec commands.",
