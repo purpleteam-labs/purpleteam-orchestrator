@@ -96,7 +96,7 @@
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.0",
     "app-module-path": "^2.2.0",
-    "convict": "^6.1.0",
+    "convict": "^6.2.2",
     "convict-format-with-moment": "^6.0.1",
     "convict-format-with-validator": "^6.0.1",
     "diff": "^5.0.0",
