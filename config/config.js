@@ -159,8 +159,8 @@ const schema = {
   job: {
     version: {
       doc: 'The version of the Job accepted by this API.',
-      format: ['0.1.0-alpha.1', '1.0.0-alpha.3', '2.0.0-alpha.3', '3.0.0-alpha.3', '3.1.0-alpha.3'],
-      default: '3.1.0-alpha.3'
+      format: ['0.1.0-alpha.1', '1.0.0-alpha.3', '2.0.0-alpha.3', '3.0.0-alpha.3', '3.1.0-alpha.3', '4.0.0-alpha.3'],
+      default: '4.0.0-alpha.3'
     }
   },
   outcomes: {
