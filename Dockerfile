@@ -70,8 +70,9 @@ RUN cd $WORKDIR && npm install
 #RUN apk del .gyp python make g++
 #USER $USER
 
-# String expansion didn't used to work currently: https://github.com/moby/moby/issues/35018
-COPY --chown=${USER}:${GROUP} . $WORKDIR
+# String expansion doesn't work currently: https://github.com/moby/moby/issues/35018
+# COPY --chown=${USER}:GROUP . $WORKDIR
+COPY --chown=orchestrator:purpleteam . $WORKDIR
 
 # Here I used to chown and chmod as shown here: http://f1.holisticinfosecforwebdevelopers.com/chap03.html#vps-countermeasures-docker-the-default-user-is-root
 # Problem is, each of these commands creates another layer of all the files modified and thus adds over 100MB to the image: https://www.datawire.io/not-engineer-running-3-5gb-docker-images/

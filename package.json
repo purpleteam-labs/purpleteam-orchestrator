@@ -101,7 +101,7 @@
     "convict-format-with-validator": "^6.2.0",
     "diff": "^5.0.0",
     "joi": "^17.6.0",
-    "purpleteam-logger": "purpleteam-labs/purpleteam-logger.git#binarymist/upgrade",
+    "purpleteam-logger": "^2.0.0",
     "redis": "^3.1.2",
     "susie": "^3.0.0"
   },
