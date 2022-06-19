@@ -39,10 +39,10 @@ jobs:
     - run: npm run build --if-present
     - run: npm run lint
     - run: npm run test:nolint
-    - run: npm run test:coveralls
-    
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Until we have some tests, there is no point in running Coveralls, as it expects a non-empty lcov file which we can not provide with no tests. Details here: https://github.com/lemurheavy/coveralls-public/issues/1610
+    #- name: Coveralls
+    #  uses: coverallsapp/github-action@master
+    #  with:
+    #    github-token: ${{ secrets.GITHUB_TOKEN }}
 
